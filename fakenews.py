@@ -21,7 +21,7 @@ newDf = df.drop(columns="label")
 print('Retirando caracteres estranhos')
 # Retirando caracteres estranhos e espaços
 for k, t in enumerate(df['text']):
-    df['text'][k] = ''.join((c for c in t if c.isalnum()))
+    df['text'][k] = ''.join((c for c in t if c.isalnum())).lower()
 
 print(df['text'])
 
