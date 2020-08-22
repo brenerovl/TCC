@@ -28,7 +28,7 @@ for k, t in enumerate(df['text']):
         ps = PorterStemmer()
         stop_words = set(stopwords.words('english'))
 
-        dataset_sent = df['text'][k] = ''.join((c for c in t))
+        dataset_sent = df['text'][k] = str(t)
         #print(dataset_sent, '\n')
 
         print('* Fazendo a lematização da', k ,'ª noticia')
