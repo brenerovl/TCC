@@ -1,6 +1,8 @@
 import pandas as pd
 import nltk
 import csv
+import wandb
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.ensemble import IsolationForest
@@ -12,7 +14,14 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
+wandb.init(project="test-project")
+
+wandb.config.test_size = 0.3
+wandb.config.seed = 0
+
 df = pd.read_csv("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/fake_or_real_news.csv")
+news_content_test = []
+result_content_test = []
 
 # Remove palavras que aparecem em mais de 40% das notícias
 TfidfVectorizer(df,analyzer='word', max_df=0.4)
@@ -28,7 +37,7 @@ for k, t in enumerate(df['text']):
         ps = PorterStemmer()
         stop_words = set(stopwords.words('english'))
 
-        dataset_sent = df['text'][k] = str(t)
+        dataset_sent = str(t)
         #print(dataset_sent, '\n')
 
         print('* Fazendo a lematização da', k ,'ª noticia')
@@ -36,24 +45,21 @@ for k, t in enumerate(df['text']):
 
         print('* Removendo Stop Words e fazendo a stemização da', k ,'ª noticia')
         word_tokens = word_tokenize(dataset_sent)
-        filtered_sentence = [w for w in word_tokens if not w in stop_words]
+
         filtered_sentence = []
 
         for w in word_tokens:
             if w not in stop_words:
                 filtered_sentence.append(ps.stem(w))
-
         print('* Retirando caracteres estranhos e espaços \n')
-        df['text'][k] = ' '.join(c for c in filtered_sentence if c.isalnum()).lower()
-        #print(df['text'][k])
+        news_content_test.append(' '.join(c for c in filtered_sentence if c.isalnum()))
+        result_content_test.append(df['label'][k])
 
-print(df['text'])
+# print(df['text'])
 
 # Filtro 2 (Feito acima se quiser pode remover)
 # Remove os english stop words
 # count_vectorizer = CountVectorizer(stop_words='english')
-# new_train = count_vectorizer.fit_transform(X_train)
-# new_test = count_vectorizer.transform(X_test)
 
 # Filtro 3 (Feito acima se quiser pode remover)
 # Usando max_df
@@ -63,28 +69,38 @@ print(df['text'])
 # tfidf_test = tfidf_vectorizer.transform(X_test)
 
 # O índice passa a ser a coluna "Unnamed: 0"
-df = df.set_index("Unnamed: 0")
+# df = df.set_index("Unnamed: 0")
 
 # Coluna mostrando apenas "REAL" ou "FAKE"
-result = df.label
+# result = df.label
 
 # Dataset sem a label "REAL" ou "FAKE"
-newDf = df.drop(columns="label")
+# newDf = df.drop(columns="label")
 #newDf = df.drop("label", axis=1)
 
 # X -> notícias y-> resultados(fake or real)
-X_train, X_test, y_train, y_test = train_test_split(df['text'], result, test_size=0.30, random_state=53)
+X_train, X_test, y_train, y_test = train_test_split(news_content_test, result_content_test, test_size=wandb.config.test_size, random_state=wandb.config.seed)
 
-# train_matrix = new_train.toarray()
-# test_matrix = new_test.toarray()
+new_test = X_test
 
-# # IsolationForest
-# # Treino
-# isolationModel = IsolationForest(random_state=0).fit(train_matrix) # Verificar random state
-# # Teste
-# # Deve ser comparado com o y_test
-# isolationTestResult = isolationModel.predict(test_matrix)
-# print(isolationTestResult)
+train_matrix = np.array(X_train).reshape(-1, 1)
+test_matrix = new_test
+
+
+# IsolationForest
+# Treino
+print('* Treinando modelo com IsolationForest')
+isolationModel = IsolationForest(random_state=0).fit(train_matrix) # Verificar random state
+# Teste
+# Deve ser comparado com o y_test
+
+print('* Testando modelo')
+isolationTestResult = isolationModel.predict(test_matrix)
+
+wandb.log({'test': isolationTestResult})
+print(isolationTestResult)
+
+wandb.sklearn.plot_class_proportions(y_train, y_test, ['TRUE', 'FAKE'])
 
 # EllipticEnvelope
 
