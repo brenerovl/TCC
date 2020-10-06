@@ -13,7 +13,6 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
-
 # wandb.init(project="test-project")
 
 # wandb.config.test_size = 0.3
@@ -24,6 +23,7 @@ seed = 53
 df = pd.read_csv("./assets/fake_or_real_news.csv")
 news_content_test = []
 result_content_test = []
+news_tf = []
 
 # Remove palavras que aparecem em mais de 40% das notícias
 TfidfVectorizer(df,analyzer='word', max_df=0.4)
@@ -36,8 +36,41 @@ nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
 
+word_map = {}
+num_words = 0
+tf_adjusted = {}
+
+def word_map_couter(word_list):
+    for w in word_list:
+        if w in word_map:
+            word_map[w] = word_map[w] + 1
+        else:
+            word_map[w] = 1
+
+def count_words(word_map):
+    count = 0
+    for w in word_map:
+        count = word_map[w] + count
+
+    return count
+# TF(t) = (quantidade de vezes que o termo t aparece no documento) / (número total de termos do documento)
+# Calcula o quão frequente é a ocorrencia de um termo específico em um documento.
+
+# IDF(t) = log_e((número total de documentos) / (número de documentos que contém o termo t))
+# Calcula a importancia do termo t
+
+# TF_IDF(t) = TF(t) * IDF(t).
+
+def term_frequency(termo, documento):
+    frequencia_t = 0
+    for t in documento:
+        if t == termo:
+            frequencia_t = frequencia_t + 1
+    
+    return frequencia_t / len(documento)
+
 for k, t in enumerate(df['text']):
-    if k < 4:
+    if k < 2:
         print('* Fazendo a lematização e retirando caracteres da', k ,'ª noticia')
         word_tokens = word_tokenize(t)
         word_filtered = []
@@ -49,12 +82,25 @@ for k, t in enumerate(df['text']):
         filtered_sentence = ' '.join(w for w in word_filtered)
         print('* Removendo Stop Words da', k ,'ª noticia')
         word_tokens = word_tokenize(filtered_sentence)
-        sentence_not_stop_word = ' '.join(w for w in word_tokens if not w in stop_words)
+        sentence_not_stop_word = [w for w in word_tokens if not w in stop_words]
+        doc_tf = {}
+        for t in sentence_not_stop_word:
+            if t not in doc_tf:
+                doc_tf[t] = term_frequency(t, sentence_not_stop_word)
 
+        word_map_couter(sentence_not_stop_word)
         print('* Retirando caracteres estranhos e espaços \n')
         news_content_test.append(sentence_not_stop_word)
+        news_tf.append(doc_tf)
+        print(news_content_test)
         result_content_test.append(df['label'][k])
 
+print('TF', len(news_tf))
+num_words = count_words(word_map)
+print('Número de palavras no documento: ', num_words)
+sortedDict = sorted(word_map.items(), key=lambda x: x[1], reverse=True)
+print('Número de palavras diferentes: ', len(sortedDict))
+print('Palavra que mais apareceu ', sortedDict[0])
 # print(df['text'])
 
 # Filtro 2 (Feito acima se quiser pode remover)
