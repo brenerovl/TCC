@@ -28,10 +28,7 @@ news_tf = []
 news_idf = {}
 news_tf_idf = []
 
-# Remove palavras que aparecem em mais de 40% das notícias
-TfidfVectorizer(df,analyzer='word', max_df=0.4)
-
-# Fazendo Lematização/Stemização , stop words usando NLK e retirando caracteres estranhos/espaços
+# Fazendo Lematização , stop words usando NLK e retirando caracteres estranhos/espaços
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -111,7 +108,8 @@ for k, t in enumerate(df['text']):
             word_filtered.append(w)
 
         filtered_sentence = ' '.join(w for w in word_filtered)
-        print('* Removendo Stop Words da', k ,'ª noticia')
+        
+        print('* Removendo Stop Words da', k + 1 ,'ª noticia')
         word_tokens = word_tokenize(filtered_sentence)
         sentence_not_stop_word = [w for w in word_tokens if not w in stop_words]
         doc_tf = {}
@@ -149,18 +147,20 @@ print('Palavra que mais apareceu ', sortedDict[0])
 # tfidf_train = tfidf_vectorizer.fit_transform(X_train)
 # tfidf_test = tfidf_vectorizer.transform(X_test)
 
-# O índice passa a ser a coluna "Unnamed: 0"
-# df = df.set_index("Unnamed: 0")
-
-# Coluna mostrando apenas "REAL" ou "FAKE"
-# result = df.label
-
-# Dataset sem a label "REAL" ou "FAKE"
-# newDf = df.drop(columns="label")
-#newDf = df.drop("label", axis=1)
-
 # X -> notícias y-> resultados(fake or real)
-# X_train, X_test, y_train, y_test = train_test_split(news_content_test, result_content_test, test_size=test_size, random_state=seed)
+#X_train, X_test, y_train, y_test = train_test_split(news_content_test, result_content_test, test_size=test_size, random_state=seed)
+
+# CountVectorizer
+count_vectorizer = CountVectorizer()
+count_vectorizer_news = count_vectorizer.fit_transform(news_content_test)
+count_vectorizer_news_array = count_vectorizer_news.toarray()
+
+# TFIDF
+tfidf_vectorizer = TfidfVectorizer()
+tfidf_vectorizer_news = tfidf_vectorizer.fit_transform(news_content_test)
+tfidf_vectorizer_news_array = tfidf_vectorizer_news.toarray()
+
+# new_test = count_vectorizer.transform(X_test)
 
 # new_test = X_test
 
@@ -170,7 +170,8 @@ print('Palavra que mais apareceu ', sortedDict[0])
 # IsolationForest
 # Treino
 # print('* Treinando modelo com IsolationForest')
-# isolationModel = IsolationForest(random_state=0).fit(train_matrix) # Verificar random state
+# isolationModel = IsolationForest(random_state=0).fit(train_matrix)
+
 # Teste
 # Deve ser comparado com o y_test
 
@@ -178,12 +179,5 @@ print('Palavra que mais apareceu ', sortedDict[0])
 # isolationTestResult = isolationModel.predict(test_matrix)
 
 # wandb.log({'test': isolationTestResult})
-# print(isolationTestResult)
 
 # wandb.sklearn.plot_class_proportions(y_train, y_test, ['TRUE', 'FAKE'])
-
-# EllipticEnvelope
-
-# LocalOutlierFactor
-
-# OneClassSVM
