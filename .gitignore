@@ -133,3 +133,6 @@ wandb
 assets
 
 teste.py
+tf.json
+idf.json
+tf_idf.json
