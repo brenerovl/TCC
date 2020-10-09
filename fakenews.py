@@ -22,7 +22,8 @@ test_size = 1
 seed = 53
 
 df = pd.read_csv("./assets/fake_or_real_news.csv")
-news_content_test = []
+news_content_array = []
+news_content_string = []
 result_content_test = []
 news_tf = []
 news_idf = {}
@@ -84,10 +85,10 @@ def inverse_document_frequency(termo, documentos):
     return math.log(len(documentos) / qtd_d_with_termo)
 
 def calc_idf():
-    for d in news_content_test:
+    for d in news_content_array:
         for t in d:
             if t not in news_idf:
-                news_idf[t] = inverse_document_frequency(t, news_content_test)
+                news_idf[t] = inverse_document_frequency(t, news_content_array)
 
 def calc_tf_idf():
     for d_tf in news_tf:
@@ -111,17 +112,19 @@ for k, t in enumerate(df['text']):
         
         print('* Removendo Stop Words da', k + 1 ,'ª noticia')
         word_tokens = word_tokenize(filtered_sentence)
-        sentence_not_stop_word = [w for w in word_tokens if not w in stop_words]
+        word_tokens_filtered = [w for w in word_tokens if not w in stop_words]
+        sentence_not_stop_word = ' '.join(w for w in word_tokens if not w in stop_words)
         doc_tf = {}
-        for t in sentence_not_stop_word:
+        for t in word_tokens_filtered:
             if t not in doc_tf:
-                doc_tf[t] = term_frequency(t, sentence_not_stop_word)
+                doc_tf[t] = term_frequency(t, word_tokens_filtered)
 
-        word_map_couter(sentence_not_stop_word)
+        word_map_couter(word_tokens_filtered)
         print('* Retirando caracteres estranhos e espaços \n')
-        news_content_test.append(sentence_not_stop_word)
+        news_content_array.append(word_tokens_filtered)
+        news_content_string.append(sentence_not_stop_word)
         news_tf.append(doc_tf)
-        print(news_content_test)
+        print(news_content_array)
         result_content_test.append(df['label'][k])
 
 calc_idf()
@@ -148,16 +151,16 @@ print('Palavra que mais apareceu ', sortedDict[0])
 # tfidf_test = tfidf_vectorizer.transform(X_test)
 
 # X -> notícias y-> resultados(fake or real)
-#X_train, X_test, y_train, y_test = train_test_split(news_content_test, result_content_test, test_size=test_size, random_state=seed)
+#X_train, X_test, y_train, y_test = train_test_split(news_content_array, result_content_test, test_size=test_size, random_state=seed)
 
 # CountVectorizer
 count_vectorizer = CountVectorizer()
-count_vectorizer_news = count_vectorizer.fit_transform(news_content_test)
+count_vectorizer_news = count_vectorizer.fit_transform(news_content_string)
 count_vectorizer_news_array = count_vectorizer_news.toarray()
 
 # TFIDF
 tfidf_vectorizer = TfidfVectorizer()
-tfidf_vectorizer_news = tfidf_vectorizer.fit_transform(news_content_test)
+tfidf_vectorizer_news = tfidf_vectorizer.fit_transform(news_content_string)
 tfidf_vectorizer_news_array = tfidf_vectorizer_news.toarray()
 
 # new_test = count_vectorizer.transform(X_test)
