@@ -63,26 +63,26 @@ if __name__ == "__main__":
     sns.countplot(data=df, x="category")
     plt.show()
     # Gráfico de quantidade de notícias divididas entre seus assuntos
-    # plt.figure(figsize = (12,8))
-    # sns.set(style = "whitegrid",font_scale = 1.2)
-    # chart = sns.countplot(x = "subject", hue = "category" , data = df)
-    # chart.set_xticklabels(chart.get_xticklabels(),rotation=90)
+    plt.figure(figsize = (12,8))
+    sns.set(style = "whitegrid",font_scale = 1.2)
+    chart = sns.countplot(x = "subject", hue = "category" , data = df)
+    chart.set_xticklabels(chart.get_xticklabels(),rotation=90)
 
 
-    # df['text'] = df['text'] + " " + df['title']
-    # del df['title']
-    # del df['subject']
-    # del df['date']
+    df['text'] = df['text'] + " " + df['title']
+    del df['title']
+    del df['subject']
+    del df['date']
 
-    # stop = set(stopwords.words('english'))
-    # punctuation = list(string.punctuation)
-    # stop.update(punctuation)
+    stop = set(stopwords.words('english'))
+    punctuation = list(string.punctuation)
+    stop.update(punctuation)
 
-    # #Apply function on review column
-    # df['text']=df['text'].apply(denoise_text)
+    #Apply function on review column
+    df['text']=df['text'].apply(denoise_text)
 
-    # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 1].text))
-    # plt.imshow(wc , interpolation = 'bilinear')
+    plt.figure(figsize = (20,20)) # Text that is not Fake
+    wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 1].text))
+    plt.imshow(wc , interpolation = 'bilinear')
 
-    # plt.show()
+    plt.show()
