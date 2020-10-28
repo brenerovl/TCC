@@ -99,7 +99,7 @@ def calc_tf_idf():
         news_tf_idf.append(tfidf)
 
 for k, t in enumerate(df['text']):
-    if k < 2:
+    if k < 4:
         print('* Fazendo a lematização e retirando caracteres da', k ,'ª noticia')
         word_tokens = word_tokenize(t)
         word_filtered = []
