@@ -7,11 +7,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import re
 import nltk
-from pylab import *
 from nltk.corpus import stopwords
 from wordcloud import WordCloud, STOPWORDS
 from bs4 import BeautifulSoup
-ioff()
 
 
 def strip_html(text):
@@ -47,8 +45,8 @@ if __name__ == "__main__":
 
     nltk.download('stopwords')
 
-    true['category'] = 1
-    false['category'] = 0
+    true['category'] = 'True'
+    false['category'] = 'Fake'
 
     df = pd.concat([true, false])
 
@@ -60,29 +58,43 @@ if __name__ == "__main__":
 
     # Gráfico de quantidade de notícias divididas entre True e Fake
     sns.set_style("darkgrid")
-    sns.countplot(data=df, x="category")
-    plt.show()
-    # Gráfico de quantidade de notícias divididas entre seus assuntos
-    # plt.figure(figsize = (12,8))
-    # sns.set(style = "whitegrid",font_scale = 1.2)
-    # chart = sns.countplot(x = "subject", hue = "category" , data = df)
-    # chart.set_xticklabels(chart.get_xticklabels(),rotation=90)
-
-
-    # df['text'] = df['text'] + " " + df['title']
-    # del df['title']
-    # del df['subject']
-    # del df['date']
-
-    # stop = set(stopwords.words('english'))
-    # punctuation = list(string.punctuation)
-    # stop.update(punctuation)
-
-    # #Apply function on review column
-    # df['text']=df['text'].apply(denoise_text)
-
-    # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 1].text))
-    # plt.imshow(wc , interpolation = 'bilinear')
-
+    veracityChart = sns.countplot(data=df, x="category")
+    plt.title('Number of news divided in True or Fake')
+    for p in veracityChart.patches:
+        veracityChart.annotate(p.get_height(), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
     # plt.show()
+
+    # Gráfico de quantidade de notícias divididas entre seus assuntos
+    plt.figure(figsize = (12,8))
+    sns.set(style = "whitegrid",font_scale = 1.2)
+    subjectChart = sns.countplot(x = "subject", hue = "category" , data = df )
+    plt.title('Number of news divided in subjects')
+    for p in subjectChart.patches:
+        subjectChart.annotate(format(p.get_height(), '.0f'), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
+    subjectChart.set_xticklabels(subjectChart.get_xticklabels(),rotation=90)
+    # plt.show()
+
+    df['text'] = df['text'] + " " + df['title']
+    del df['title']
+    del df['subject']
+    del df['date']
+
+    stop = set(stopwords.words('english'))
+    punctuation = list(string.punctuation)
+    stop.update(punctuation)
+
+    #Apply function on review column
+    df['text']=df['text'].apply(denoise_text)
+
+    plt.figure(figsize = (20,20)) # Text that is not Fake
+    wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'True'].text))
+    plt.imshow(wc , interpolation = 'bilinear')
+
+    plt.title('Most used words in authentic news')
+
+    plt.figure(figsize = (20,20)) # Text that is not Fake
+    wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'Fake'].text))
+    plt.imshow(wc , interpolation = 'bilinear')
+
+    plt.title('Most used words in fake news')
+    plt.show()
