@@ -7,7 +7,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import re
 import nltk
+import csv
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 from wordcloud import WordCloud, STOPWORDS
 from bs4 import BeautifulSoup
 
@@ -32,11 +35,23 @@ def remove_stopwords(text):
             final_text.append(i.strip())
     return " ".join(final_text)
 
+#Doing stemming
+def lemma(text):
+    for i in text.split():
+        word_tokens = word_tokenize(i)
+        word_filtered = []
+        for w in word_tokens:
+            w = lemmatizer.lemmatize(w, pos='v')
+            word_filtered.append(w)
+    return " ".join(w for w in word_filtered)
+    
+
 #Removing the noisy text
 def denoise_text(text):
     text = strip_html(text)
     text = remove_between_square_brackets(text)
     text = remove_stopwords(text)
+    text = lemma(text)
     return text
 
 if __name__ == "__main__":
@@ -45,10 +60,12 @@ if __name__ == "__main__":
     false = pd.read_csv("./assets/sliced_fake.csv")
 
 # Utilizando o Dataset original
-    # true = pd.read_csv("./assets/sliced_true.csv")
-    # false = pd.read_csv("./assets/sliced_fake.csv")
+    # true = pd.read_csv("./assets/True.csv")
+    # false = pd.read_csv("./assets/Fake.csv")
 
     nltk.download('stopwords')
+
+    lemmatizer = WordNetLemmatizer()
 
     true['category'] = 'True'
     false['category'] = 'Fake'
@@ -67,7 +84,6 @@ if __name__ == "__main__":
     plt.title('Number of news divided in True or Fake')
     for p in veracityChart.patches:
         veracityChart.annotate(p.get_height(), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
-    # plt.show()
 
     # Gráfico de quantidade de notícias divididas entre seus assuntos
     plt.figure(figsize = (12,8))
@@ -77,7 +93,6 @@ if __name__ == "__main__":
     for p in subjectChart.patches:
         subjectChart.annotate(format(p.get_height(), '.0f'), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
     subjectChart.set_xticklabels(subjectChart.get_xticklabels(),rotation=90)
-    # plt.show()
 
     df['text'] = df['text'] + " " + df['title']
     del df['title']
@@ -97,10 +112,9 @@ if __name__ == "__main__":
 
     plt.title('Most used words in authentic news')
 
-    # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'Fake'].text))
-    # plt.imshow(wc , interpolation = 'bilinear')
+    plt.figure(figsize = (20,20)) # Text that is not Fake
+    wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'Fake'].text))
+    plt.imshow(wc , interpolation = 'bilinear')
 
-    # plt.title('Most used words in fake news')
-    
+    plt.title('Most used words in fake news')
     plt.show()
