@@ -137,3 +137,4 @@ idf.json
 tf_idf.json
 
 .vscode
+__pycache__

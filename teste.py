@@ -40,8 +40,13 @@ def denoise_text(text):
     return text
 
 if __name__ == "__main__":
-    true = pd.read_csv("./assets/True.csv")
-    false = pd.read_csv("./assets/Fake.csv")
+# Utilizando o Dataset reduzido que pode ser gerado no script quebra_df
+    true = pd.read_csv("./assets/sliced_true.csv")
+    false = pd.read_csv("./assets/sliced_fake.csv")
+
+# Utilizando o Dataset original
+    # true = pd.read_csv("./assets/sliced_true.csv")
+    # false = pd.read_csv("./assets/sliced_fake.csv")
 
     nltk.download('stopwords')
 
@@ -92,9 +97,10 @@ if __name__ == "__main__":
 
     plt.title('Most used words in authentic news')
 
-    plt.figure(figsize = (20,20)) # Text that is not Fake
-    wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'Fake'].text))
-    plt.imshow(wc , interpolation = 'bilinear')
+    # plt.figure(figsize = (20,20)) # Text that is not Fake
+    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'Fake'].text))
+    # plt.imshow(wc , interpolation = 'bilinear')
 
-    plt.title('Most used words in fake news')
+    # plt.title('Most used words in fake news')
+    
     plt.show()
