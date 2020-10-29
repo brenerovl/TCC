@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+wandb
+
+assets
+
+tf.json
+idf.json
+tf_idf.json
+
+.vscode
+__pycache__
