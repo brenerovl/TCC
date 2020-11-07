@@ -130,6 +130,10 @@ def pre_processamento():
     X = vectorizer.fit_transform(df['text'])
     print(X.shape)
     tfidf_vectorizer_news_array = X.toarray()
+<<<<<<< HEAD
     train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.45, random_state=42)
+=======
+    train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.26, random_state=42)
+>>>>>>> afcd8d0ea8d7f8d10da02a4f316762310dd75f37
 
     return train, test
