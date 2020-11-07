@@ -48,7 +48,7 @@ def lemma(text):
             w = lemmatizer.lemmatize(w, pos='v')
             word_filtered.append(w)
     return " ".join(w for w in word_filtered)
-    
+
 
 #Removing the noisy text
 def denoise_text(text):
@@ -130,6 +130,6 @@ def pre_processamento():
     X = vectorizer.fit_transform(df['text'])
     print(X.shape)
     tfidf_vectorizer_news_array = X.toarray()
-    train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.25, random_state=42)
+    train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.26, random_state=42)
 
     return train, test
