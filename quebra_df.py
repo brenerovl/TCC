@@ -2,7 +2,7 @@ import pandas as pd
 
 # r_news - Quantidade de notícias que estarão no dataframe reduzido
 
-r_news = 300
+r_news = 30
 n_news = list(range(r_news))
 
 fake_csv = pd.read_csv('./assets/Fake.csv')

@@ -75,10 +75,14 @@ def pre_processamento():
     nltk.download('stopwords')
 
 
-    true['category'] = 'True'
-    false['category'] = 'Fake'
+    true['category'] = 1
+    false['category'] = -1
 
     df = pd.concat([true, false])
+
+    result = df['category']
+    result = [result.to_numpy()]
+    result = np.transpose(result)
 
     # print(df.isna().sum())
     print('Title')
@@ -114,13 +118,13 @@ def pre_processamento():
     df['text']=df['text'].apply(denoise_text)
 
     # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'True'].text))
+    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 1].text))
     # plt.imshow(wc , interpolation = 'bilinear')
     # plt.title('Most used words in authentic news')
 
 
     # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 'Fake'].text))
+    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == -1].text))
     # plt.imshow(wc , interpolation = 'bilinear')
     # plt.title('Most used words in fake news')
 
@@ -130,6 +134,7 @@ def pre_processamento():
     X = vectorizer.fit_transform(df['text'])
     print(X.shape)
     tfidf_vectorizer_news_array = X.toarray()
+    tfidf_vectorizer_news_array = np.append(tfidf_vectorizer_news_array, result, axis=1)
     train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.45, random_state=42)
 
     return train, test
