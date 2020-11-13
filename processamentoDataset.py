@@ -137,4 +137,9 @@ def pre_processamento():
     tfidf_vectorizer_news_array = np.append(tfidf_vectorizer_news_array, result, axis=1)
     train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.45, random_state=42)
 
-    return train, test
+    result = test[:, - 1]
+
+    train = np.delete(train, np.s_[-1:], axis=1)
+    test = np.delete(test, np.s_[-1:], axis=1)
+
+    return train, test, result
