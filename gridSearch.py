@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # Utilizando um classificador (SVC) (sklearn indica esse)
     svc = svm.SVC()
     # print(svc.get_params().keys())
-    # Parametros que podem ser usados:
+    # Parametros que podem ser usados :
     # dict_keys(['C', 'break_ties', 'cache_size', 'class_weight', 'coef0', 'decision_function_shape', 
     # 'degree', 'gamma', 'kernel', 'max_iter', 'probability', 'random_state', 'shrinking', 'tol', 'verbose'])
     parameters = {'C': [1, 10, 100, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'verbose': [True, False]}
