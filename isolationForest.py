@@ -1,34 +1,41 @@
-from processamentoDataset import pre_processamento
-import matplotlib.pyplot as plt
-from sklearn.ensemble import IsolationForest
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import time
+from ProcessamentoDataset import pre_processamento
+from sklearn.ensemble import IsolationForest
+from GridSearch import IFParams
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import recall_score
 
 
-if __name__ == "__main__":
+def runIsolationForest(train, test, resultTest, resultTrain):
 
-    train, test, result = pre_processamento()
+    IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs = IFParams(train, resultTrain)
 
-    isf = IsolationForest(random_state=42, max_samples=10, contamination=0.5).fit(train)
+    ptimeinit = time.time()
 
-    train_result = isf.predict(test)
-    result_list = train_result.tolist()
+    isf = IsolationForest(random_state=42, max_samples = IFmax_samples, contamination = IFcontamination, n_estimators = IFn_estimators, n_jobs = IFn_jobs, max_features = IFmax_features ).fit(train)
 
-    acc_metric = accuracy_score(result, result_list, normalize=True)
-    precision_metric = precision_score(result, result_list)
-    f1_metric = f1_score(result, result_list)
-    recall_metric = recall_score(result, result_list)
+    predict_test = isf.predict(test)
+    predict_list = predict_test.tolist()
+
+    acc_metric = accuracy_score(resultTest, predict_list, normalize=True)
+    precision_metric = precision_score(resultTest, predict_list)
+    f1_metric = f1_score(resultTest, predict_list)
+    recall_metric = recall_score(resultTest, predict_list)
 
     print('accuracy: ', acc_metric)
     print('precision: ', precision_metric)
     print('f1: ', f1_metric)
     print('recall: ', recall_metric)
-    result_df = pd.DataFrame({'freq': result_list})
+
+    result_df = pd.DataFrame({'freq': predict_list})
     result_df.groupby('freq', as_index=False).size().plot(kind='bar')
+
+    print("Tempo em s do IF", time.time() - ptimeinit)
 
     plt.show()

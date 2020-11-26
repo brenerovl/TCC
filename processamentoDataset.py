@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import re
 import nltk
 import csv
+import time
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -59,6 +60,10 @@ def denoise_text(text):
     return text
 
 def pre_processamento():
+    ptimeinit = time.time()
+    nltk.download('stopwords')
+    nltk.download('punkt')
+    nltk.download('wordnet')
 # Utilizando o Dataset reduzido que pode ser gerado no script quebra_df
     true = pd.read_csv("./assets/sliced_true.csv")
     false = pd.read_csv("./assets/sliced_fake.csv")
@@ -71,8 +76,6 @@ def pre_processamento():
 # Utilizando o Dataset original
     # true = pd.read_csv("./assets/True.csv")
     # false = pd.read_csv("./assets/Fake.csv")
-
-    nltk.download('stopwords')
 
 
     true['category'] = 1
@@ -143,4 +146,5 @@ def pre_processamento():
     train = np.delete(train, np.s_[-1:], axis=1)
     test = np.delete(test, np.s_[-1:], axis=1)
 
+    print("Tempo em s do pp", time.time() - ptimeinit)
     return train, test, resultTest, resultTrain

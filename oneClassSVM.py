@@ -1,36 +1,41 @@
-from numpy.core.multiarray import result_type
-from processamentoDataset import pre_processamento
-import matplotlib.pyplot as plt
-from sklearn.svm import OneClassSVM
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import time
+from numpy.core.multiarray import result_type
+from ProcessamentoDataset import pre_processamento
+from GridSearch import OSVMParams
+from sklearn.svm import OneClassSVM
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import recall_score
 
-if __name__ == "__main__":
+def runOneClassSVM(train, test, resultTest, resultTrain):
 
-    train, test, result = pre_processamento()
+    OSVMc, OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
 
-    ocs = OneClassSVM(gamma=0.01).fit(train)
+    ptimeinit = time.time()
 
-    result_test = ocs.predict(train)
-    result_list = result_test.tolist()
+    ocs = OneClassSVM(gamma = OSVMgamma, degree = OSVMdegree, kernel = OSVMkernel).fit(train)
 
-    acc_metric = accuracy_score(result, result_list, normalize=True)
-    precision_metric = precision_score(result, result_list)
-    f1_metric = f1_score(result, result_list)
-    recall_metric = recall_score(result, result_list)
+    predict_test = ocs.predict(test)
+    predict_list = predict_test.tolist()
+
+    acc_metric = accuracy_score(resultTest, predict_list, normalize=True)
+    precision_metric = precision_score(resultTest, predict_list)
+    f1_metric = f1_score(resultTest, predict_list)
+    recall_metric = recall_score(resultTest, predict_list)
 
     print('accuracy: ', acc_metric)
     print('precision: ', precision_metric)
     print('f1: ', f1_metric)
     print('recall: ', recall_metric)
 
-
-    result_df = pd.DataFrame({'freq': result_list})
+    result_df = pd.DataFrame({'freq': predict_list})
     result_df.groupby('freq', as_index=False).size().plot(kind='bar')
+
+    print("Tempo em s do OSVM", time.time() - ptimeinit)
 
     plt.show()
