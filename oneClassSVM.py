@@ -36,7 +36,7 @@ def runOneClassSVM(train, test, resultTest, resultTrain):
     print('recall: ', recall_metric)
 
     result_df = pd.DataFrame({'freq': predict_list})
-    result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news', kind='pie', legend = True, autopct='%1.1f%%')
+    result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
 
     print("Tempo em s do OSVM", time.time() - ptimeinit)
 
