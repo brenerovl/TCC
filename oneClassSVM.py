@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import ylabel
+from numpy.core.numeric import True_
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,7 +36,7 @@ def runOneClassSVM(train, test, resultTest, resultTrain):
     print('recall: ', recall_metric)
 
     result_df = pd.DataFrame({'freq': predict_list})
-    result_df.groupby('freq', as_index=False).size().plot(kind='barh')
+    result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news', kind='pie', legend = True, autopct='%1.1f%%')
 
     print("Tempo em s do OSVM", time.time() - ptimeinit)
 
