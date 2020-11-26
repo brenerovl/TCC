@@ -34,11 +34,7 @@ def runLocalOutlierFactor(train, test, resultTest, resultTrain):
     print('recall: ', recall_metric)
 
     result_df = pd.DataFrame({'freq': predict_list})
-<<<<<<< HEAD
     result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
-=======
-    result_df.groupby('freq').size().plot(kind='bar')
->>>>>>> 485d29e6955acd2ae50ffa6c18ec29e020101518
 
     print("Tempo em s do LOF", time.time() - ptimeinit)
 
