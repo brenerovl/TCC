@@ -34,7 +34,7 @@ def runOneClassSVM(train, test, resultTest, resultTrain):
     print('recall: ', recall_metric)
 
     result_df = pd.DataFrame({'freq': predict_list})
-    result_df.groupby('freq', as_index=False).size().plot(kind='bar')
+    result_df.groupby('freq', as_index=False).size().plot(kind='barh')
 
     print("Tempo em s do OSVM", time.time() - ptimeinit)
 
