@@ -60,7 +60,6 @@ def denoise_text(text):
     return text
 
 def pre_processamento():
-    ptimeinit = time.time()
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
@@ -138,13 +137,11 @@ def pre_processamento():
     print(X.shape)
     tfidf_vectorizer_news_array = X.toarray()
     tfidf_vectorizer_news_array = np.append(tfidf_vectorizer_news_array, result, axis=1)
-    train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.45, random_state=42)
-
+    train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.38, random_state=42)
     resultTest = test[:, - 1]
     resultTrain = train[:, - 1]
 
     train = np.delete(train, np.s_[-1:], axis=1)
     test = np.delete(test, np.s_[-1:], axis=1)
 
-    print("Tempo em s do pp", time.time() - ptimeinit)
     return train, test, resultTest, resultTrain

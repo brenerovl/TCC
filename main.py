@@ -7,7 +7,7 @@ from Quebra_df import quebraDF
 
 if __name__ == "__main__":
 
-    quebraDF(150)
+    quebraDF(200)
     train, test, resultTest, resultTrain = pre_processamento()
     runOneClassSVM(train, test, resultTest, resultTrain)
     # runEllipticEnvelope(train, test, resultTest, resultTrain)
