@@ -76,5 +76,12 @@ def IFParams(train, resultTrain):
     IFn_jobs = IF.best_estimator_.n_jobs
     IFResults = pd.DataFrame(IF.cv_results_)
     IFResults.to_csv(r'./assets/IFResults.csv')
+<<<<<<< HEAD:gridSearch.py
 
     return IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs
+=======
+    print("IF  best params: ", IF.best_params_)
+    print("IF  Best score: ", IF.best_score_)
+    print("Tempo em s do GridSearchIF", time.time() - ptimeinit)
+    return IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs
+>>>>>>> 2b4bb723f5c4fd0a0c0f76f3f3eed00bcdb11b2c:GridSearch.py

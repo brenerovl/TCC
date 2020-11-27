@@ -1,26 +1,29 @@
+from operator import index
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import ylabel
+from numpy.core.numeric import True_
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+from numpy.core.multiarray import result_type
 from ProcessamentoDataset import pre_processamento
-from sklearn.ensemble import IsolationForest
-from GridSearch import IFParams
+from GridSearch import OSVMParams
+from sklearn.svm import OneClassSVM
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import recall_score
 
-
-def runIsolationForest(train, test, resultTest, resultTrain):
+def runOneClassSVM(train, test, resultTest, resultTrain):
 
     ptimeinit = time.time()
 
-    IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs = IFParams(train, resultTrain)
-    
-    isf = IsolationForest(random_state=42, max_samples = IFmax_samples, contamination = IFcontamination, n_estimators = IFn_estimators, n_jobs = IFn_jobs, max_features = IFmax_features ).fit(train)
+    OSVMc, OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
 
-    predict_test = isf.predict(test)
+    ocs = OneClassSVM(gamma = OSVMgamma, degree = OSVMdegree, kernel = OSVMkernel).fit(train)
+
+    predict_test = ocs.predict(test)
     predict_list = predict_test.tolist()
 
     acc_metric = accuracy_score(resultTest, predict_list, normalize=True)
@@ -34,8 +37,12 @@ def runIsolationForest(train, test, resultTest, resultTrain):
     result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
     totalTime = time.time() - ptimeinit
 
-    plt.savefig('./graphs/truefakeresultIF.png')
-    
+    plt.savefig('./graphs/truefakeresultOSVM.png')
+
+<<<<<<< HEAD:oneClassSVM.py
     metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime]
     OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime'])
-    OSVMmetrics.to_excel('./metrics/metricsIF.xlsx')
+    OSVMmetrics.to_excel('./metrics/metricsOSVM.xlsx')
+=======
+    plt.show()
+>>>>>>> 2b4bb723f5c4fd0a0c0f76f3f3eed00bcdb11b2c:OneClassSVM.py
