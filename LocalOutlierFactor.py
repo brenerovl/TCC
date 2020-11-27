@@ -14,9 +14,9 @@ from sklearn.metrics import recall_score
 
 def runLocalOutlierFactor(train, test, resultTest, resultTrain):
 
-    LOFcontamination, LOFn_neighbors, LOFnovelty = LOFParams(train, resultTrain)
-
     ptimeinit = time.time()
+
+    LOFcontamination, LOFn_neighbors, LOFnovelty = LOFParams(train, resultTrain)
 
     lof = LocalOutlierFactor(n_neighbors = LOFn_neighbors, contamination = LOFcontamination, novelty = LOFnovelty ).fit(train)
 
@@ -28,14 +28,14 @@ def runLocalOutlierFactor(train, test, resultTest, resultTrain):
     f1_metric = f1_score(resultTest, predict_list)
     recall_metric = recall_score(resultTest, predict_list)
 
-    print('accuracy: ', acc_metric)
-    print('precision: ', precision_metric)
-    print('f1: ', f1_metric)
-    print('recall: ', recall_metric)
-
     result_df = pd.DataFrame({'freq': predict_list})
+    result_df['freq'] = result_df['freq'].replace([-1], 'False')
+    result_df['freq'] = result_df['freq'].replace([1], 'True')
     result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
+    totalTime = time.time() - ptimeinit
 
-    print("Tempo em s do LOF", time.time() - ptimeinit)
-
-    plt.show()
+    plt.savefig('./graphs/truefakeresultLOF.png')
+   
+    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime]
+    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime'])
+    OSVMmetrics.to_excel('./metrics/metricsLOF.xlsx')

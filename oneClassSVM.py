@@ -1,3 +1,4 @@
+from operator import index
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import ylabel
 from numpy.core.numeric import True_
@@ -16,9 +17,9 @@ from sklearn.metrics import recall_score
 
 def runOneClassSVM(train, test, resultTest, resultTrain):
 
-    OSVMc, OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
-
     ptimeinit = time.time()
+
+    OSVMc, OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
 
     ocs = OneClassSVM(gamma = OSVMgamma, degree = OSVMdegree, kernel = OSVMkernel).fit(train)
 
@@ -30,14 +31,14 @@ def runOneClassSVM(train, test, resultTest, resultTrain):
     f1_metric = f1_score(resultTest, predict_list)
     recall_metric = recall_score(resultTest, predict_list)
 
-    print('accuracy: ', acc_metric)
-    print('precision: ', precision_metric)
-    print('f1: ', f1_metric)
-    print('recall: ', recall_metric)
-
     result_df = pd.DataFrame({'freq': predict_list})
+    result_df['freq'] = result_df['freq'].replace([-1], 'False')
+    result_df['freq'] = result_df['freq'].replace([1], 'True')
     result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
+    totalTime = time.time() - ptimeinit
 
-    print("Tempo em s do OSVM", time.time() - ptimeinit)
+    plt.savefig('./graphs/truefakeresultOSVM.png')
 
-    plt.show()
+    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime]
+    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime'])
+    OSVMmetrics.to_excel('./metrics/metricsOSVM.xlsx')
