@@ -34,14 +34,8 @@ def runEllipticEnvelope(train, test, resultTest, resultTrain):
     result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
     totalTime = time.time() - ptimeinit
 
-<<<<<<< HEAD:ellipticEnvelope.py
     plt.savefig('./graphs/truefakeresultEE.png')
     
     metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime]
     OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime'])
     OSVMmetrics.to_excel('./metrics/metricsEE.xlsx')
-=======
-    print("Tempo em s do EE", time.time() - ptimeinit)
-
-    plt.show()
->>>>>>> 2b4bb723f5c4fd0a0c0f76f3f3eed00bcdb11b2c:EllipticEnvelope.py

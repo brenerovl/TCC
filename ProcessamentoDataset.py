@@ -42,6 +42,7 @@ def remove_stopwords(text):
 
 #Doing stemming
 def lemma(text):
+    word_filtered = []
     for i in text.split():
         word_tokens = word_tokenize(i)
         word_filtered = []

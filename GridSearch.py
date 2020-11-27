@@ -13,19 +13,19 @@ from ProcessamentoDataset import pre_processamento
 def OSVMParams(train, resultTrain):
     # Rodando o GridSearchCV para o One Class SVM
     microF1 = make_scorer(f1_score , average='micro')
-    OSVMgridSearchParameters = {'C': [1, 10, 100, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001,  'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
-
+    OSVMgridSearchParameters = {'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001,  'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
+    
     svc = svm.SVC()
     OSVM = GridSearchCV(svc, OSVMgridSearchParameters , scoring= microF1, verbose=100)
     OSVM.fit(train, resultTrain)
-    OSVMc = OSVM.best_estimator_.C
+    # OSVMc = OSVM.best_estimator_.C
     OSVMdegree = OSVM.best_estimator_.degree
     OSVMgamma = OSVM.best_estimator_.gamma
     OSVMkernel = OSVM.best_estimator_.kernel
     OSVMResults = pd.DataFrame(OSVM.cv_results_)
     OSVMResults.to_csv(r'./assets/OSVM.csv')
     
-    return OSVMc, OSVMdegree, OSVMgamma, OSVMkernel
+    return  OSVMdegree, OSVMgamma, OSVMkernel
 
 def EEParams(train, resultTrain):   
     # Rodando o GridSearchCV para o Elliptic Envelope
@@ -76,12 +76,5 @@ def IFParams(train, resultTrain):
     IFn_jobs = IF.best_estimator_.n_jobs
     IFResults = pd.DataFrame(IF.cv_results_)
     IFResults.to_csv(r'./assets/IFResults.csv')
-<<<<<<< HEAD:gridSearch.py
 
     return IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs
-=======
-    print("IF  best params: ", IF.best_params_)
-    print("IF  Best score: ", IF.best_score_)
-    print("Tempo em s do GridSearchIF", time.time() - ptimeinit)
-    return IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs
->>>>>>> 2b4bb723f5c4fd0a0c0f76f3f3eed00bcdb11b2c:GridSearch.py

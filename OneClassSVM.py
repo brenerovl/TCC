@@ -19,7 +19,7 @@ def runOneClassSVM(train, test, resultTest, resultTrain):
 
     ptimeinit = time.time()
 
-    OSVMc, OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
+    OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
 
     ocs = OneClassSVM(gamma = OSVMgamma, degree = OSVMdegree, kernel = OSVMkernel).fit(train)
 
@@ -39,10 +39,6 @@ def runOneClassSVM(train, test, resultTest, resultTrain):
 
     plt.savefig('./graphs/truefakeresultOSVM.png')
 
-<<<<<<< HEAD:oneClassSVM.py
     metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime]
     OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime'])
     OSVMmetrics.to_excel('./metrics/metricsOSVM.xlsx')
-=======
-    plt.show()
->>>>>>> 2b4bb723f5c4fd0a0c0f76f3f3eed00bcdb11b2c:OneClassSVM.py
