@@ -13,10 +13,10 @@ from ProcessamentoDataset import pre_processamento
 def OSVMParams(train, resultTrain):
     # Rodando o GridSearchCV para o One Class SVM
     microF1 = make_scorer(f1_score , average='micro')
-    OSVMgridSearchParameters = {'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001,  'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
+    OSVMgridSearchParameters = {'C': [1, 10, 100, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001, 'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
     
     svc = svm.SVC()
-    OSVM = GridSearchCV(svc, OSVMgridSearchParameters , scoring= microF1, verbose=100)
+    OSVM = GridSearchCV(svc, OSVMgridSearchParameters, scoring= microF1, verbose=100, n_jobs=-1)
     OSVM.fit(train, resultTrain)
     # OSVMc = OSVM.best_estimator_.C
     OSVMdegree = OSVM.best_estimator_.degree
@@ -33,7 +33,7 @@ def EEParams(train, resultTrain):
     microF1 = make_scorer(f1_score , average = 'micro')
 
     ell = EllipticEnvelope()
-    EE = GridSearchCV(ell, EEgridSearchParameters , scoring= microF1, verbose=100)
+    EE = GridSearchCV(ell, EEgridSearchParameters, scoring= microF1, verbose=100, n_jobs=-1)
     EE.fit(train, resultTrain)
     EEcontamination = EE.best_estimator_.contamination
     EEassume_centered = EE.best_estimator_.assume_centered
@@ -49,7 +49,7 @@ def LOFParams(train, resultTrain):
     microF1 = make_scorer(f1_score , average='micro')
 
     LOF = LocalOutlierFactor()
-    LOF = GridSearchCV(LOF, LOFgridSearchParameters , scoring= microF1, verbose=100)
+    LOF = GridSearchCV(LOF, LOFgridSearchParameters, scoring= microF1, verbose=100, n_jobs=-1)
     LOF.fit(train, resultTrain)
     LOFcontamination = LOF.best_estimator_.contamination
     LOFn_neighbors = LOF.best_estimator_.n_neighbors
@@ -63,11 +63,11 @@ def IFParams(train, resultTrain):
     # Rodando o GridSearchCV para o Isolation Forest
     max_sample_limit = train.shape[0]
     max_features_limit = train.shape[1]
-    IFgridSearchParameters = {'contamination': np.linspace(0.01, 0.5, 10),'n_estimators': (55, 75, 95, 115), 'max_samples': np.arange( 1 , max_sample_limit,), 'max_features': (1, 20, max_features_limit), 'n_jobs':[None, -1]} 
+    IFgridSearchParameters = {'contamination': np.linspace(0.01, 0.5, 10),'n_estimators': (55, 75, 95, 115), 'max_samples': np.arange( 1 , max_sample_limit,), 'max_features': (1, 20, max_features_limit), 'n_jobs':[1]} 
     microF1 = make_scorer(f1_score , average='micro')
 
     IF = IsolationForest()
-    IF = GridSearchCV(IF, IFgridSearchParameters , scoring= microF1, verbose=100) #verbose=100 para ver todos os testes do grid
+    IF = GridSearchCV(IF, IFgridSearchParameters, scoring= microF1, verbose=100, n_jobs=-1) #verbose=100 para ver todos os testes do grid
     IF.fit(train, resultTrain)
     IFcontamination = IF.best_estimator_.contamination
     IFmax_features = IF.best_estimator_.max_features

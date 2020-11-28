@@ -18,7 +18,7 @@ def runLocalOutlierFactor(train, test, resultTest, resultTrain):
 
     LOFcontamination, LOFn_neighbors, LOFnovelty = LOFParams(train, resultTrain)
 
-    lof = LocalOutlierFactor(n_neighbors = LOFn_neighbors, contamination = LOFcontamination, novelty = LOFnovelty ).fit(train)
+    lof = LocalOutlierFactor(n_neighbors = LOFn_neighbors, contamination = LOFcontamination, novelty = LOFnovelty).fit(train)
 
     predict_test = lof.predict(test)
     predict_list = predict_test.tolist()

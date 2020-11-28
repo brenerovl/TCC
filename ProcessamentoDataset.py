@@ -93,14 +93,14 @@ def pre_processamento():
     print('Subject')
     print(df.subject.value_counts())
 
-    # Gráfico de quantidade de notícias divididas entre True e Fake
+    # Grafico de quantidade de noticias divididas entre True e Fake
     # sns.set_style("darkgrid")
     # veracityChart = sns.countplot(data=df, x="category")
     # plt.title('Number of news divided in True or Fake')
     # for p in veracityChart.patches:
     #     veracityChart.annotate(p.get_height(), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
 
-    # Gráfico de quantidade de notícias divididas entre seus assuntos
+    # Grafico de quantidade de noticias divididas entre seus assuntos
     # plt.figure(figsize = (12,8))
     # sns.set(style = "whitegrid",font_scale = 1.2)
     # subjectChart = sns.countplot(x = "subject", hue = "category" , data = df )
