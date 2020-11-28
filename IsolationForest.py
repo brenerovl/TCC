@@ -18,7 +18,7 @@ def runIsolationForest(train, test, resultTest, resultTrain):
 
     IFcontamination, IFmax_features, IFmax_samples, IFn_estimators, IFn_jobs = IFParams(train, resultTrain)
     
-    isf = IsolationForest(random_state=42, max_samples = IFmax_samples, contamination = IFcontamination, n_estimators = IFn_estimators, n_jobs = IFn_jobs, max_features = IFmax_features ).fit(train)
+    isf = IsolationForest(random_state=42, max_samples = IFmax_samples, contamination = IFcontamination, n_estimators = IFn_estimators, n_jobs = IFn_jobs, max_features = IFmax_features).fit(train)
 
     predict_test = isf.predict(test)
     predict_list = predict_test.tolist()
