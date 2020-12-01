@@ -8,33 +8,31 @@ import matplotlib.pyplot as plt
 import time
 from numpy.core.multiarray import result_type
 from ProcessamentoDataset import pre_processamento
-from GridSearch import OSVMParams
+from GridSearch import runGridSearch
 from sklearn.svm import OneClassSVM
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import recall_score
 
-def runOneClassSVM(train, test, resultTest, resultTrain):
+def runOneClassSVM(X, Y):
 
     ptimeinit = time.time()
+    ocsvmEstimator = OneClassSVM()
+    OSVMgridSearchParameters = {'nu': [0.0625, 0.125, 0.250, 0.5], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001, 'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
+    bestScore, bestParams, predict = runGridSearch(ocsvmEstimator, OSVMgridSearchParameters, X, Y)
 
-    OSVMdegree, OSVMgamma, OSVMkernel = OSVMParams(train, resultTrain)
+    nu, gamma, kernel, degree = bestParams
 
-    ocs = OneClassSVM(gamma = OSVMgamma, degree = OSVMdegree, kernel = OSVMkernel).fit(train)
+    acc_metric = accuracy_score(Y, predict, normalize=True)
+    precision_metric = precision_score(Y, predict)
+    f1_metric = f1_score(Y, predict)
+    recall_metric = recall_score(Y, predict)
 
-    predict_test = ocs.predict(test)
-    predict_list = predict_test.tolist()
-
-    acc_metric = accuracy_score(resultTest, predict_list, normalize=True)
-    precision_metric = precision_score(resultTest, predict_list)
-    f1_metric = f1_score(resultTest, predict_list)
-    recall_metric = recall_score(resultTest, predict_list)
-
-    result_df = pd.DataFrame({'freq': predict_list})
+    result_df = pd.DataFrame({'freq': predict})
     result_df['freq'] = result_df['freq'].replace([-1], 'False')
     result_df['freq'] = result_df['freq'].replace([1], 'True')
-    result_df.groupby('freq').size().plot(ylabel = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
+    result_df.groupby('freq').size().plot(title = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
     totalTime = time.time() - ptimeinit
 
     plt.savefig('./graphs/truefakeresultOSVM.png')

@@ -83,9 +83,9 @@ def pre_processamento():
 
     df = pd.concat([true, false])
 
-    result = df['category']
-    result = [result.to_numpy()]
-    result = np.transpose(result)
+    Y = df['category']
+    Y = [Y.to_numpy()]
+    Y = np.transpose(Y)
 
     # print(df.isna().sum())
     print('Title')
@@ -133,16 +133,9 @@ def pre_processamento():
 
     # plt.show()
 
-    vectorizer = TfidfVectorizer();
+    vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['text'])
     print(X.shape)
-    tfidf_vectorizer_news_array = X.toarray()
-    tfidf_vectorizer_news_array = np.append(tfidf_vectorizer_news_array, result, axis=1)
-    train, test = train_test_split(tfidf_vectorizer_news_array, test_size=0.38, random_state=42)
-    resultTest = test[:, - 1]
-    resultTrain = train[:, - 1]
+    X = X.toarray()
 
-    train = np.delete(train, np.s_[-1:], axis=1)
-    test = np.delete(test, np.s_[-1:], axis=1)
-
-    return train, test, resultTest, resultTrain
+    return X, Y

@@ -9,23 +9,31 @@ from sklearn.metrics import f1_score, make_scorer
 from sklearn import svm
 from ProcessamentoDataset import pre_processamento
 
+def runGridSearch(estimator, parameters, X, Y):
+    microF1 = make_scorer(f1_score , average='micro')
+
+    gscv = GridSearchCV(estimator, parameters, scoring = microF1, verbose = 100, n_jobs = -1)
+    gscv.fit(X, Y)
+
+    return (gscv.best_score_, gscv.best_params_, gscv.predict(X))
+
 
 def OSVMParams(train, resultTrain):
     # Rodando o GridSearchCV para o One Class SVM
     microF1 = make_scorer(f1_score , average='micro')
-    OSVMgridSearchParameters = {'C': [1, 10, 100, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001, 'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
+    OSVMgridSearchParameters = {'nu': [0.0625, 0.125, 0.250, 0.5], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001, 'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
     
-    svc = svm.SVC()
+    svc = svm.OneClassSVM()
     OSVM = GridSearchCV(svc, OSVMgridSearchParameters, scoring= microF1, verbose=100, n_jobs=-1)
     OSVM.fit(train, resultTrain)
-    # OSVMc = OSVM.best_estimator_.C
+    OSVMnu = OSVM.best_estimator_.nu
     OSVMdegree = OSVM.best_estimator_.degree
     OSVMgamma = OSVM.best_estimator_.gamma
     OSVMkernel = OSVM.best_estimator_.kernel
     OSVMResults = pd.DataFrame(OSVM.cv_results_)
     OSVMResults.to_csv(r'./assets/OSVM.csv')
     
-    return  OSVMdegree, OSVMgamma, OSVMkernel
+    return  OSVMnu, OSVMdegree, OSVMgamma, OSVMkernel
 
 def EEParams(train, resultTrain):   
     # Rodando o GridSearchCV para o Elliptic Envelope
