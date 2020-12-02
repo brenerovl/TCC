@@ -32,7 +32,6 @@ def runGridSearch(estimator, parameters, X, Y):
         trial_parameters.append(clf.best_params_)
 
         # Nested CV with parameter optimization
-        # nested_score = cross_val_score(clf, X=X, y=Y, cv=outer_cv)
         nested_score = cross_validate(clf, X, Y, cv=outer_cv, scoring=('accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted'))
         nested_scores.append(nested_score)
 
