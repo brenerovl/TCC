@@ -17,7 +17,7 @@ def runEllipticEnvelope(X, Y):
 
     ellEnvelope = EllipticEnvelope()
 
-    EEgridSearchParameters = {\
+    EEgridSearchParameters = { 
         'contamination': np.linspace(0.01, 0.5, 50),\
         'assume_centered' : [True, False]} 
 
@@ -28,5 +28,5 @@ def runEllipticEnvelope(X, Y):
     metricData = [bestScores['fit_time'], bestScores['score_time'], \
                   bestScores['accuracy'], bestScores['precision'], bestScores['recall'], bestScores['f1_micro'], bestScores['f1_macro'], bestScores['f1_weighted'], \
                   bestParams['contamination'], bestParams['assume_centered']]
-    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['fit_time', 'score_time', 'accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted', 'contamination', 'assume_centered'])
-    OSVMmetrics.to_excel('./metrics/metricsEE.xlsx')
+    EEmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['fit_time', 'score_time', 'accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted', 'contamination', 'assume_centered'])
+    EEmetrics.to_excel('./metrics/metricsEE.xlsx')

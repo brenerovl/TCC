@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import time
+import pprint
 from GridSearch import runGridSearch
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.metrics import accuracy_score
@@ -12,28 +13,20 @@ from utils import exponentialList
 
 def runLocalOutlierFactor(X, Y):
 
-    ptimeinit = time.time()
-    LOFEstimator = LocalOutlierFactor()
-    LOFgridSearchParameters = {'contamination': np.linspace(0.01, 0.5, 10), 'novelty':[True], 'n_neighbors': exponentialList(X.shape[0])}
-    bestScore, bestParams, predict = runGridSearch(LOFEstimator, LOFgridSearchParameters, X, Y)
+    LOFactor = LocalOutlierFactor()
 
-    print('Best parameters', bestParams)
+    LOFgridSearchParameters = {\
+        'contamination': np.linspace(0.01, 0.5, 10),\
+        'novelty':[True],\
+        'n_neighbors': exponentialList(X.shape[0])}
 
-    contamination, n_neighbors, novelty = bestParams.items()
+    bestScores, bestParams = runGridSearch(LOFactor, LOFgridSearchParameters, X, Y)
+    pprint.pprint(bestScores)
+    pprint.pprint(bestParams)
 
-    acc_metric = accuracy_score(Y, predict, normalize=True)
-    precision_metric = precision_score(Y, predict)
-    f1_metric = f1_score(Y, predict)
-    recall_metric = recall_score(Y, predict)
-
-    result_df = pd.DataFrame({'freq': predict})
-    result_df['freq'] = result_df['freq'].replace([-1], 'False')
-    result_df['freq'] = result_df['freq'].replace([1], 'True')
-    result_df.groupby('freq').size().plot(title = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
-    totalTime = time.time() - ptimeinit
-
-    plt.savefig('./graphs/truefakeresultLOF.png')
+    metricData = [bestScores['fit_time'], bestScores['score_time'], \
+                  bestScores['accuracy'], bestScores['precision'], bestScores['recall'], bestScores['f1_micro'], bestScores['f1_macro'], bestScores['f1_weighted'], \
+                  bestParams['contamination'], bestParams['novelty'], bestParams['n_neighbors'] ]
    
-    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, contamination[1], novelty[1], n_neighbors[1], bestScore]
-    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime', 'contamination', 'novelty', 'n_neighbors', 'bestScore'])
-    OSVMmetrics.to_excel('./metrics/metricsLOF.xlsx')
+    LOFmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['fit_time', 'score_time', 'accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted', 'contamination', 'novelty', 'n_neighbors' ])
+    LOFmetrics.to_excel('./metrics/metricsLOF.xlsx')
