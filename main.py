@@ -8,8 +8,8 @@ from Quebra_df import quebraDF
 if __name__ == "__main__":
 
     quebraDF(10000)
-    train, test, resultTest, resultTrain = pre_processamento()
-    runOneClassSVM(train, test, resultTest, resultTrain)
-    # runEllipticEnvelope(train, test, resultTest, resultTrain)
-    # runLocalOutlierFactor(train, test, resultTest, resultTrain)    
-    # runIsolationForest(train, test, resultTest, resultTrain)    #ta dando treta aqui (joblib)
+    X, Y = pre_processamento()
+    runOneClassSVM(X, Y)
+    # runEllipticEnvelope(X, Y)
+    # runLocalOutlierFactor(X, Y)
+    # runIsolationForest(X, Y)    #ta dando treta aqui (joblib)
