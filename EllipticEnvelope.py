@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import pprint
 from numpy.core.multiarray import result_type
 from ProcessamentoDataset import pre_processamento
 from GridSearch import runGridSearch
@@ -14,26 +15,18 @@ from sklearn.metrics import recall_score
 
 def runEllipticEnvelope(X, Y):
 
-    ptimeinit = time.time()
-    ellEstimator = EllipticEnvelope()
-    EEgridSearchParameters = {'contamination': np.linspace(0.01, 0.5, 50), 'assume_centered' : [True, False]} 
-    bestScore, bestParams, predict = runGridSearch(ellEstimator, EEgridSearchParameters, X, Y)    
+    ellEnvelope = EllipticEnvelope()
 
-    assume_centered, contamination = bestParams.items()
+    EEgridSearchParameters = {\
+        'contamination': np.linspace(0.01, 0.5, 50),\
+        'assume_centered' : [True, False]} 
 
-    acc_metric = accuracy_score(Y, predict, normalize=True)
-    precision_metric = precision_score(Y, predict)
-    f1_metric = f1_score(Y, predict)
-    recall_metric = recall_score(Y, predict)
+    bestScores, bestParams = runGridSearch(ellEnvelope, EEgridSearchParameters, X, Y)    
+    pprint.pprint(bestScores)
+    pprint.pprint(bestParams)
 
-    result_df = pd.DataFrame({'freq': predict})
-    result_df['freq'] = result_df['freq'].replace([-1], 'False')
-    result_df['freq'] = result_df['freq'].replace([1], 'True')
-    result_df.groupby('freq').size().plot(title = 'Number of True and Fake news ', kind='pie', legend = True, autopct='%1.1f%%')
-    totalTime = time.time() - ptimeinit
-
-    plt.savefig('./graphs/truefakeresultEE.png')
-    
-    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, contamination[1], assume_centered[1], bestScore]
-    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime', 'contamination', 'assume_centered', 'bestScore'])
+    metricData = [bestScores['fit_time'], bestScores['score_time'], \
+                  bestScores['accuracy'], bestScores['precision'], bestScores['recall'], bestScores['f1_micro'], bestScores['f1_macro'], bestScores['f1_weighted'], \
+                  bestParams['contamination'], bestParams['assume_centered']]
+    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['fit_time', 'score_time', 'accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted', 'contamination', 'assume_centered'])
     OSVMmetrics.to_excel('./metrics/metricsEE.xlsx')
