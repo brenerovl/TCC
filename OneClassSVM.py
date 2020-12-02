@@ -20,9 +20,10 @@ def runOneClassSVM(X, Y):
     ptimeinit = time.time()
     ocsvmEstimator = OneClassSVM()
     OSVMgridSearchParameters = {'nu': [0.0625, 0.125, 0.250, 0.5], 'gamma': [0.1, 0.01, 0.001, 0.0001, 0.00001, 'auto', 'scale'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree':[2, 3, 4]}
-    bestScore, bestParams, predict = runGridSearch(ocsvmEstimator, OSVMgridSearchParameters, X, Y)
-
-    nu, gamma, kernel, degree = bestParams
+    bestScore, bestParams = runGridSearch(ocsvmEstimator, OSVMgridSearchParameters, X, Y)
+    print('best params', bestParams)
+    degree, gamma, kernel, nu = bestParams.items()
+    predict = OneClassSVM(degree = degree[1], gamma = gamma[1], kernel = kernel[1], nu = nu[1]).fit(X).predict(X)
 
     acc_metric = accuracy_score(Y, predict, normalize=True)
     precision_metric = precision_score(Y, predict)
@@ -37,6 +38,6 @@ def runOneClassSVM(X, Y):
 
     plt.savefig('./graphs/truefakeresultOSVM.png')
 
-    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, nu, gamma, kernel, degree, bestScore]
+    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, nu[1], gamma[1], kernel[1], degree[1], bestScore]
     OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime', 'nu', 'gamma', 'kernel', 'degree', 'bestScore'])
     OSVMmetrics.to_excel('./metrics/metricsOSVM.xlsx')

@@ -6,7 +6,6 @@ import time
 from ProcessamentoDataset import pre_processamento
 from sklearn.ensemble import IsolationForest
 from GridSearch import runGridSearch
-from GridSearch import IFParams
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
@@ -22,7 +21,7 @@ def runIsolationForest(X, Y):
     IFgridSearchParameters = {'contamination': np.linspace(0.01, 0.5, 10),'n_estimators': (55, 75, 95, 115), 'max_samples': np.arange( 1 , max_sample_limit,), 'max_features': (1, 20, max_features_limit)} 
     bestScore, bestParams, predict = runGridSearch(IFEstimator, IFgridSearchParameters, X, Y)
 
-    contamination, n_estimators, max_samples, max_features = bestParams
+    contamination, max_features, max_samples, n_estimators = bestParams.items()
 
     acc_metric = accuracy_score(Y, predict, normalize=True)
     precision_metric = precision_score(Y, predict)
@@ -37,6 +36,6 @@ def runIsolationForest(X, Y):
 
     plt.savefig('./graphs/truefakeresultIF.png')
     
-    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, contamination, n_estimators, max_samples, max_features, bestScore]
+    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, contamination[1], n_estimators[1], max_samples[1], max_features[1], bestScore]
     OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime', 'contamination', 'n_estimators', 'max_samples', 'max_features','bestScore' ])
     OSVMmetrics.to_excel('./metrics/metricsIF.xlsx')

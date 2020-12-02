@@ -1,21 +1,73 @@
 import numpy as np
 import pandas as pd
 import time
+import matplotlib.pyplot as plt
 from sklearn.covariance import EllipticEnvelope
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.ensemble import IsolationForest
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
 from sklearn.metrics import f1_score, make_scorer
 from sklearn import svm
 from ProcessamentoDataset import pre_processamento
 
+def plotScores(non_nested_scores, nested_scores, score_difference, NUM_TRIALS):
+        plt.figure()
+        plt.subplot(211)
+        non_nested_scores_line, = plt.plot(non_nested_scores, color='r')
+        nested_line, = plt.plot(nested_scores, color='b')
+        plt.ylabel("score", fontsize="14")
+        plt.legend([non_nested_scores_line, nested_line],
+                ["Non-Nested CV", "Nested CV"],
+                bbox_to_anchor=(0, .4, .5, 0))
+        plt.title("Non-Nested and Nested Cross Validation on Iris Dataset",
+                x=.5, y=1.1, fontsize="15")
+
+        # Plot bar chart of the difference.
+        plt.subplot(212)
+        difference_plot = plt.bar(range(NUM_TRIALS), score_difference)
+        plt.xlabel("Individual Trial #")
+        plt.legend([difference_plot],
+                ["Non-Nested CV - Nested CV Score"],
+                bbox_to_anchor=(0, 1, .8, 0))
+        plt.ylabel("score difference", fontsize="14")
+
+        plt.savefig('./graphs/scoresGridSearch.png')
+
+
 def runGridSearch(estimator, parameters, X, Y):
+    NUM_TRIALS = 3
+    N_SPLITS = 5
+
+    non_nested_scores = np.zeros(NUM_TRIALS)
+    nested_scores = np.zeros(NUM_TRIALS)
+    parametersTrails = []
+
     microF1 = make_scorer(f1_score , average='micro')
 
-    gscv = GridSearchCV(estimator, parameters, scoring = microF1, verbose = 100, n_jobs = -1)
-    gscv.fit(X, Y)
+    for i in range(NUM_TRIALS):
+        inner_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
+        outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
 
-    return (gscv.best_score_, gscv.best_params_, gscv.predict(X))
+        gscv = GridSearchCV(estimator, parameters, scoring = microF1, verbose = 100, n_jobs = -1, cv = inner_cv)
+        gscv.fit(X, Y)
+
+        non_nested_scores[i] = gscv.best_score_
+        parametersTrails.append(gscv.best_params_)
+
+        nested_score = cross_val_score(gscv, X=X, y=Y, cv=outer_cv)
+        nested_scores[i] = nested_score.mean()
+
+    score_difference = non_nested_scores - nested_scores
+    max_index = np.argmax(score_difference)
+    print('max index', max_index)
+
+    bestParameter = parametersTrails[max_index]
+    bestScore = non_nested_scores[max_index]
+
+    plotScores(non_nested_scores, nested_scores, score_difference, NUM_TRIALS)
+
+    return (bestScore, bestParameter)
+
 
 
 # def OSVMParams(train, resultTrain):

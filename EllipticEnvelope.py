@@ -7,7 +7,6 @@ from numpy.core.multiarray import result_type
 from ProcessamentoDataset import pre_processamento
 from GridSearch import runGridSearch
 from sklearn.covariance import EllipticEnvelope
-from GridSearch import EEParams
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
@@ -20,7 +19,7 @@ def runEllipticEnvelope(X, Y):
     EEgridSearchParameters = {'contamination': np.linspace(0.01, 0.5, 50), 'assume_centered' : [True, False]} 
     bestScore, bestParams, predict = runGridSearch(ellEstimator, EEgridSearchParameters, X, Y)    
 
-    contamination, assume_centered = bestParams
+    assume_centered, contamination = bestParams.items()
 
     acc_metric = accuracy_score(Y, predict, normalize=True)
     precision_metric = precision_score(Y, predict)
@@ -35,6 +34,6 @@ def runEllipticEnvelope(X, Y):
 
     plt.savefig('./graphs/truefakeresultEE.png')
     
-    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, contamination, assume_centered, bestScore]
+    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, contamination[1], assume_centered[1], bestScore]
     OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime', 'contamination', 'assume_centered', 'bestScore'])
     OSVMmetrics.to_excel('./metrics/metricsEE.xlsx')
