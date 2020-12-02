@@ -37,6 +37,6 @@ def runOneClassSVM(X, Y):
 
     plt.savefig('./graphs/truefakeresultOSVM.png')
 
-    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime]
-    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime'])
+    metricData = [acc_metric, precision_metric, f1_metric, recall_metric , totalTime, nu, gamma, kernel, degree, bestScore]
+    OSVMmetrics = pd.DataFrame(metricData, columns= ['value'], index = ['accuracy', 'precision', 'f1', 'recall', 'totalTime', 'nu', 'gamma', 'kernel', 'degree', 'bestScore'])
     OSVMmetrics.to_excel('./metrics/metricsOSVM.xlsx')
