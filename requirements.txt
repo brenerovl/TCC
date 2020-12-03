@@ -1,10 +1,14 @@
 # Recomenda-se o uso do Python 3.8
+<<<<<<< HEAD
 numpy==1.19.3
+=======
+# pip install --user -r requirements.txt
+numpy
+>>>>>>> 11690bd241e204885e8fe3d3f5fc2a3f80f2242c
 scipy
 pandas
 seaborn
 matplotlib==3.3.3
-nltk
 nltk
 wordcloud
 bs4
