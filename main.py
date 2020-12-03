@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     quebraDF(100)
     X, Y = pre_processamento()
-    runOneClassSVM(X, Y)
-    # runEllipticEnvelope(X, Y)
+    # runOneClassSVM(X, Y)
+    runEllipticEnvelope(X, Y)
     # runLocalOutlierFactor(X, Y)
     # runIsolationForest(X, Y)

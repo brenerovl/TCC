@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import time
 import pprint
 from GridSearch import runGridSearch
 from sklearn.neighbors import LocalOutlierFactor
@@ -13,14 +12,14 @@ from utils import exponentialList
 
 def runLocalOutlierFactor(X, Y):
 
-    LOFactor = LocalOutlierFactor()
+    lof = LocalOutlierFactor()
 
-    LOFgridSearchParameters = {\
+    parameters = {\
         'contamination': np.linspace(0.01, 0.5, 10),\
         'novelty':[True],\
         'n_neighbors': exponentialList(X.shape[0])}
 
-    bestScores, bestParams = runGridSearch(LOFactor, LOFgridSearchParameters, X, Y)
+    bestScores, bestParams = runGridSearch(lof, parameters, X, Y)
     pprint.pprint(bestScores)
     pprint.pprint(bestParams)
 

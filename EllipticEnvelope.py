@@ -15,13 +15,13 @@ from sklearn.metrics import recall_score
 
 def runEllipticEnvelope(X, Y):
 
-    ellEnvelope = EllipticEnvelope()
+    ell = EllipticEnvelope()
 
-    EEgridSearchParameters = { 
-        'contamination': np.linspace(0.01, 0.5, 50),\
-        'assume_centered' : [True, False]} 
+    parameters = { \
+        'contamination': np.linspace(0.01, 0.5, 10), \
+        'assume_centered' : [True, False]}
 
-    bestScores, bestParams = runGridSearch(ellEnvelope, EEgridSearchParameters, X, Y)    
+    bestScores, bestParams = runGridSearch(ell, parameters, X, Y)
     pprint.pprint(bestScores)
     pprint.pprint(bestParams)
 
