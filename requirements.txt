@@ -1,5 +1,5 @@
 # Recomenda-se o uso do Python 3.8
-numpy
+numpy==1.19.3
 scipy
 pandas
 seaborn
@@ -9,3 +9,4 @@ nltk
 wordcloud
 bs4
 sklearn
+openpyxl
