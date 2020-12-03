@@ -1,6 +1,5 @@
 # Recomenda-se o uso do Python 3.8
 # pip install --user -r requirements.txt
-
 numpy
 scipy
 pandas
