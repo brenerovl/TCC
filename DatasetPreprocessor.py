@@ -37,7 +37,7 @@ def remove_between_square_brackets(text):
     return re.sub('\[[^]]*\]', '', text)
 
 # Removing URL's
-def remove_between_square_brackets(text):
+def remove_urls(text):
     return re.sub(r'http\S+', '', text)
 
 # Removing the stopwords from text
@@ -64,22 +64,23 @@ def denoise_text(text):
     text = strip_strange_symbols(text)
     text = to_lower_case(text)
     text = remove_between_square_brackets(text)
+    text = remove_urls(text)
     text = remove_stopwords(text)
     text = lemmatize(text)
     return text
 
 # perform principal component analysis
 def principal_component_analysis(X,search=False):
+    print(f'B: n_samples = {len(X)}, n_features = {len(X[0])}')
     if search == False:
-        pca = decomposition.PCA(n_components=len(X),svd_solver='full')
+        pca = decomposition.PCA(n_components=len(X),svd_solver='auto')
         pca.fit(X)
     else:
-        print(f'n_samples = {len(X)}, n_features = {len(X[0])}')
         n_min,n_max = 1,int(min(len(X),len(X[0])))
         n = int((n_min + n_max) / 2)
         score = -math.inf
         while True:
-            pca = decomposition.PCA(n_components=n,svd_solver='full')
+            pca = decomposition.PCA(n_components=n,svd_solver='auto')
             pca.fit(X)
             score = np.cumsum(pca.explained_variance_ratio_)[-1]
             print(f'n_components = {n} => score = {score}')
@@ -88,62 +89,79 @@ def principal_component_analysis(X,search=False):
                 n_min = n
             else:
                 break
-    return pca.transform(X)
+    X = pca.transform(X)
+    print(f'A: n_samples = {len(X)}, n_features = {len(X[0])}')
+    return X
 
 def load_and_preprocess(sliceAmount=-1):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
 
-    # Utilizando o Dataset original
-    if sliceAmount == -1:
-        true = pd.read_csv('./assets/True.csv')
-        false = pd.read_csv('./assets/Fake.csv')
-    # Utilizando o Dataset reduzido que pode ser gerado no script quebra_df
-    else:
-        sliceDataFrame(sliceAmount)
-        true = pd.read_csv('./assets/True_Sliced.csv')
-        false = pd.read_csv('./assets/Fake_Sliced.csv')
+    try:
+        # Tenta carregar os data sets ja processado do disco
+        print('Attempting to load data from cached data set...')
+        X = np.load(f'./assets/X_{sliceAmount}.npy',allow_pickle=True)
+        Y = np.load(f'./assets/Y_{sliceAmount}.npy',allow_pickle=True)
+        print('Data successfully loaded from cached files.')
+    except OSError:
+        print('Unable to load cached data set. Loading from original files...')
+        # Carrega o data set inteiro (21417+23537=44954 noticias)
+        if sliceAmount == -1:
+            true = pd.read_csv('./assets/True.csv')
+            false = pd.read_csv('./assets/Fake.csv')
+        # Carrega o data set inteiro e seleciona 'sliceAmount' noticias
+        else:
+            sliceDataFrame(sliceAmount)
+            true = pd.read_csv(f'./assets/True_{sliceAmount}.csv')
+            false = pd.read_csv(f'./assets/Fake_{sliceAmount}.csv')
+        print('Data successfully loaded from original files.')
 
-    global lemmatizer
-    global stop
+        global lemmatizer
+        global stop
 
-    lemmatizer = WordNetLemmatizer()
-    stop = set(stopwords.words('english'))
+        lemmatizer = WordNetLemmatizer()
+        stop = set(stopwords.words('english'))
 
-    true['category'] = 1
-    false['category'] = -1
+        true['category'] = 1
+        false['category'] = -1
 
-    df = pd.concat([true, false])
+        df = pd.concat([true, false])
 
-    Y = df['category']
-    Y = [Y.to_numpy()]
-    Y = np.transpose(Y)
+        Y = df['category']
+        Y = [Y.to_numpy()]
+        Y = np.transpose(Y)
 
-    print('Title')
-    print(df.title.count())
-    print('Subject')
-    print(df.subject.value_counts())
+        print('Title')
+        print(df.title.count())
+        print('Subject')
+        print(df.subject.value_counts())
 
-    df['text'] = df['text'] + " " + df['title']
+        df['text'] = df['text'] + " " + df['title']
 
-    del df['title']
-    del df['subject']
-    del df['date']
-    del df['Unnamed: 0']
+        del df['title']
+        del df['subject']
+        del df['date']
+        if 'Unnamed: 0' in df.columns:
+            del df['Unnamed: 0']
 
-    punctuation = list(string.punctuation)
-    stop.update(punctuation)
+        punctuation = list(string.punctuation)
+        stop.update(punctuation)
 
-    print(f'Performing denoise_text...')
-    df['text'] = df['text'].apply(denoise_text)
+        print(f'Performing denoise_text...')
+        df['text'] = df['text'].apply(denoise_text)
 
-    print(f'Performing TF-IDF vectorization...')
-    vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform(df['text']).toarray()
-    X = StandardScaler().fit_transform(X)
+        print(f'Performing TF-IDF vectorization...')
+        vectorizer = TfidfVectorizer()
+        X = vectorizer.fit_transform(df['text']).toarray()
+        X = StandardScaler().fit_transform(X)
 
-    print(f'Performing principal component analysis...')
-    X = principal_component_analysis(X)
+        print(f'Performing principal component analysis...')
+        X = principal_component_analysis(X)
+
+    # cache data set to filesystem (numpy file format)
+    np.save(f'./assets/X_{sliceAmount}.npy', X)
+    np.save(f'./assets/Y_{sliceAmount}.npy', Y)
+    print('Data set successfully cached for further reuse.')
 
     return X, Y
