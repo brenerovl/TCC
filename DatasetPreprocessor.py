@@ -91,7 +91,7 @@ def principal_component_analysis(X,n=None):
     print(f'Score (cumulative variance) = {np.cumsum(pca.explained_variance_ratio_)[-1]}')
     return X
 
-def load_and_preprocess(sliceAmount=-1):
+def load_and_preprocess(n_news='all',shuffle=False):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
@@ -99,22 +99,22 @@ def load_and_preprocess(sliceAmount=-1):
     try:
         # Tenta carregar os data sets ja processado do disco
         print('Attempting to load data from cached data set...')
-        X = np.load(f'./assets/cache_npz/X_{sliceAmount}.npz')
+        X = np.load(f'./assets/cache_npz/X_{n_news}.npz')
         X = X.f.arr_0
-        Y = np.load(f'./assets/cache_npz/Y_{sliceAmount}.npz')
+        Y = np.load(f'./assets/cache_npz/Y_{n_news}.npz')
         Y = Y.f.arr_0
         print('Data successfully loaded from cached files.')
     except OSError:
         print('Unable to load cached data set. Loading from original files...')
         # Carrega o data set inteiro (21417+23537=44954 noticias)
-        if sliceAmount == -1:
+        if n_news == 'all':
             true = pd.read_csv('./assets/True.csv')
             false = pd.read_csv('./assets/Fake.csv')
         # Carrega o data set inteiro e seleciona 'sliceAmount' noticias
         else:
-            sliceDataFrame(sliceAmount)
-            true = pd.read_csv(f'./assets/cache_csv/True_{sliceAmount}.csv')
-            false = pd.read_csv(f'./assets/cache_csv/Fake_{sliceAmount}.csv')
+            sliceDataFrame(n_news,shuffle)
+            true = pd.read_csv(f'./assets/cache_csv/True_{n_news}.csv')
+            false = pd.read_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
         print('Data successfully loaded from original files.')
 
         global lemmatizer
@@ -160,8 +160,8 @@ def load_and_preprocess(sliceAmount=-1):
         X = principal_component_analysis(X,'n_samples')
 
         # cache data set to filesystem (numpy file format)
-        np.savez_compressed(f'./assets/cache_npz/X_{sliceAmount}.npz', X)
-        np.savez_compressed(f'./assets/cache_npz/Y_{sliceAmount}.npz', Y)
+        np.savez_compressed(f'./assets/cache_npz/X_{n_news}.npz', X)
+        np.savez_compressed(f'./assets/cache_npz/Y_{n_news}.npz', Y)
         print('Data set successfully cached for further reuse.')
 
     # logging the data read from the filesystem
