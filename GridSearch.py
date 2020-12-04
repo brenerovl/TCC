@@ -1,17 +1,17 @@
-import numpy as np
-import pandas as pd
 import time
 import matplotlib.pyplot as plt
-from sklearn.covariance import EllipticEnvelope
-from sklearn.neighbors import LocalOutlierFactor
-from sklearn.ensemble import IsolationForest
-from sklearn.model_selection import GridSearchCV, KFold, cross_val_score, cross_validate
-from sklearn.metrics import f1_score, make_scorer
-from sklearn import svm
+import numpy as np
+import pandas as pd
 from ProcessamentoDataset import pre_processamento
+from sklearn import svm
+from sklearn.covariance import EllipticEnvelope
+from sklearn.ensemble import IsolationForest
+from sklearn.metrics import f1_score, make_scorer
+from sklearn.model_selection import (GridSearchCV, KFold, cross_val_score, cross_validate)
+from sklearn.neighbors import LocalOutlierFactor
 
 def runGridSearch(estimator, parameters, X, Y):
-    N_TRIALS = 10
+    N_TRIALS = 1
     N_SPLITS = 5
 
     non_nested_scores = []

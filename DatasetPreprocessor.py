@@ -1,24 +1,25 @@
+import csv
+import re
 import string
-import numpy as np
-import scipy as sp
-import pandas as pd
-import seaborn as sns
+import time
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import re
 import nltk
-import csv
-import time
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from wordcloud import WordCloud, STOPWORDS
+import numpy as np
+import pandas as pd
+import scipy as sp
+import seaborn as sns
 from bs4 import BeautifulSoup
-from sklearn import svm
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from sklearn import decomposition, svm
 from sklearn.ensemble import IsolationForest
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from sklearn import decomposition
+from sklearn.preprocessing import StandardScaler
+from wordcloud import STOPWORDS, WordCloud
+from utils import sliceDataFrame
 
 def strip_html(text):
     soup = BeautifulSoup(text, "html.parser")
@@ -67,54 +68,30 @@ def denoise_text(text):
     return text
 
 # perform principal component analysis
-def principal_component_analysis(X,n):
-    pca = decomposition.PCA(n_components=n)
+def principal_component_analysis(X):
+    pca = decomposition.PCA(n_components=5000)
     pca.fit(X)
+    plt.plot(np.cumsum(pca.explained_variance_ratio_))
+    plt.xlabel('number of components')
+    plt.ylabel('cumulative explained variance');
+    plt.show()
     X = pca.transform(X)
     return X
 
-def plots(df):
-    # Grafico de quantidade de noticias divididas entre True e Fake
-    # sns.set_style("darkgrid")
-    # veracityChart = sns.countplot(data=df, x="category")
-    # plt.title('Number of news divided in True or Fake')
-    # for p in veracityChart.patches:
-    #     veracityChart.annotate(p.get_height(), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
-
-    # Grafico de quantidade de noticias divididas entre seus assuntos
-    # plt.figure(figsize = (12,8))
-    # sns.set(style = "whitegrid",font_scale = 1.2)
-    # subjectChart = sns.countplot(x = "subject", hue = "category" , data = df )
-    # plt.title('Number of news divided in subjects')
-    # for p in subjectChart.patches:
-    #     subjectChart.annotate(format(p.get_height(), '.0f'), (p.get_x() + p.get_width() / 2, p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
-    # subjectChart.set_xticklabels(subjectChart.get_xticklabels(),rotation=90)
-    pass
-
-def wordcloud(df):
-    # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == 1].text))
-    # plt.imshow(wc , interpolation = 'bilinear')
-    # plt.title('Most used words in authentic news')
-
-    # plt.figure(figsize = (20,20)) # Text that is not Fake
-    # wc = WordCloud(max_words = 2000 , width = 1600 , height = 800 , stopwords = STOPWORDS).generate(" ".join(df[df.category == -1].text))
-    # plt.imshow(wc , interpolation = 'bilinear')
-    # plt.title('Most used words in fake news')
-    pass
-
-def pre_processamento():
+def load_and_preprocess(sliceAmount=-1):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
 
-    # Utilizando o Dataset reduzido que pode ser gerado no script quebra_df
-    true = pd.read_csv("./assets/sliced_true.csv")
-    false = pd.read_csv("./assets/sliced_fake.csv")
-
     # Utilizando o Dataset original
-    # true = pd.read_csv("./assets/True.csv")
-    # false = pd.read_csv("./assets/Fake.csv")
+    if sliceAmount == -1:
+        true = pd.read_csv("./assets/True.csv")
+        false = pd.read_csv("./assets/Fake.csv")
+    # Utilizando o Dataset reduzido que pode ser gerado no script quebra_df
+    else:
+        sliceDataFrame(sliceAmount)
+        true = pd.read_csv("./assets/True_Sliced.csv")
+        false = pd.read_csv("./assets/Fake_Sliced.csv")
 
     global lemmatizer
     global stop
@@ -152,16 +129,16 @@ def pre_processamento():
     # Apply function on review column
     df['text'] = df['text'].apply(denoise_text)
 
-    # debugging the data frame
-    # print(df.to_string())
-    # print(df.columns.tolist())
-    # for i in range(10):
-    #     print(f'X[{i} = {X[i]} mean = {np.mean(X[i])} sum = {np.sum(X[i])}')
-
     # wordcloud()
 
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['text']).toarray()
-    X = principal_component_analysis(X,10)
+    X = StandardScaler().fit_transform(X)
+
+    print(f'n_samples = {len(X)}')
+    for i in range(40):
+        print(f'n_features[{i}] = {len(X[i])}')
+
+    X = principal_component_analysis(X)
 
     return X, Y

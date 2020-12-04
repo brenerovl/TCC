@@ -1,15 +1,14 @@
-from ProcessamentoDataset import pre_processamento
-from OneClassSVM import runOneClassSVM
-from IsolationForest import runIsolationForest
+from DatasetPreprocessor import load_and_preprocess
 from EllipticEnvelope import runEllipticEnvelope
+from IsolationForest import runIsolationForest
 from LocalOutlierFactor import runLocalOutlierFactor
-from utils import quebraDF
+from OneClassSVM import runOneClassSVM
 
 if __name__ == "__main__":
 
-    quebraDF(100)
-    X, Y = pre_processamento()
-    runOneClassSVM(X, Y)
+    X, Y = load_and_preprocess(sliceAmount=500)
+
+    # runOneClassSVM(X, Y)
     # runEllipticEnvelope(X, Y)
     # runLocalOutlierFactor(X, Y)
     # runIsolationForest(X, Y)
