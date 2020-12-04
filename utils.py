@@ -11,7 +11,7 @@ def exponentialList(len):
 
 def sliceDataFrame(n_news,shuffle=False):
     # n_news - Quantidade de cada tipo de notícias que estará no dataframe reduzido
-    n_news = list(range(n_news))
+    news_range = list(range(n_news))
 
     fake_csv = pd.read_csv('./assets/Fake.csv')
     true_csv = pd.read_csv('./assets/True.csv')
@@ -20,8 +20,8 @@ def sliceDataFrame(n_news,shuffle=False):
         fake_csv.sample(n=n_news,random_state=42).to_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
         true_csv.sample(n=n_news,random_state=42).to_csv(f'./assets/cache_csv/True_{n_news}.csv')
     else:
-        fake_csv.loc[n_news].to_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
-        true_csv.loc[n_news].to_csv(f'./assets/cache_csv/True_{n_news}.csv')
+        fake_csv.loc[news_range].to_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
+        true_csv.loc[news_range].to_csv(f'./assets/cache_csv/True_{n_news}.csv')
 
 def plots(df):
     # Grafico de quantidade de noticias divididas entre True e Fake
