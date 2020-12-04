@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     X, Y = load_and_preprocess(sliceAmount=500)
 
-    # runOneClassSVM(X, Y)
+    runOneClassSVM(X, Y)
     # runEllipticEnvelope(X, Y)
     # runLocalOutlierFactor(X, Y)
     # runIsolationForest(X, Y)

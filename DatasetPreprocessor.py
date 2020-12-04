@@ -69,11 +69,13 @@ def denoise_text(text):
 
 # perform principal component analysis
 def principal_component_analysis(X):
-    pca = decomposition.PCA(n_components=5000)
+    n_pca_components = int(np.floor(np.sqrt(min(len(X),len(X[0])))))
+    print(f'n_components = {n_pca_components}')
+    pca = decomposition.PCA(n_components=n_pca_components,svd_solver='full')
     pca.fit(X)
     plt.plot(np.cumsum(pca.explained_variance_ratio_))
     plt.xlabel('number of components')
-    plt.ylabel('cumulative explained variance');
+    plt.ylabel('cumulative explained variance')
     plt.show()
     X = pca.transform(X)
     return X
@@ -85,13 +87,13 @@ def load_and_preprocess(sliceAmount=-1):
 
     # Utilizando o Dataset original
     if sliceAmount == -1:
-        true = pd.read_csv("./assets/True.csv")
-        false = pd.read_csv("./assets/Fake.csv")
+        true = pd.read_csv('./assets/True.csv')
+        false = pd.read_csv('./assets/Fake.csv')
     # Utilizando o Dataset reduzido que pode ser gerado no script quebra_df
     else:
         sliceDataFrame(sliceAmount)
-        true = pd.read_csv("./assets/True_Sliced.csv")
-        false = pd.read_csv("./assets/Fake_Sliced.csv")
+        true = pd.read_csv('./assets/True_Sliced.csv')
+        false = pd.read_csv('./assets/Fake_Sliced.csv')
 
     global lemmatizer
     global stop
@@ -134,11 +136,7 @@ def load_and_preprocess(sliceAmount=-1):
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['text']).toarray()
     X = StandardScaler().fit_transform(X)
-
-    print(f'n_samples = {len(X)}')
-    for i in range(40):
-        print(f'n_features[{i}] = {len(X[i])}')
-
+    print(f'n_samples = {len(X)}, n_features = {len(X[0])}')
     X = principal_component_analysis(X)
 
     return X, Y
