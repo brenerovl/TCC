@@ -100,7 +100,9 @@ def load_and_preprocess(sliceAmount=-1):
         # Tenta carregar os data sets ja processado do disco
         print('Attempting to load data from cached data set...')
         X = np.load(f'./assets/cache_npz/X_{sliceAmount}.npz')
+        X = X.f.arr_0
         Y = np.load(f'./assets/cache_npz/Y_{sliceAmount}.npz')
+        Y = Y.f.arr_0
         print('Data successfully loaded from cached files.')
     except OSError:
         print('Unable to load cached data set. Loading from original files...')
@@ -157,9 +159,13 @@ def load_and_preprocess(sliceAmount=-1):
         print(f'Performing principal component analysis...')
         X = principal_component_analysis(X,'n_samples')
 
-    # cache data set to filesystem (numpy file format)
-    np.savez_compressed(f'./assets/cache_npz/X_{sliceAmount}.npz', X)
-    np.savez_compressed(f'./assets/cache_npz/Y_{sliceAmount}.npz', Y)
-    print('Data set successfully cached for further reuse.')
+        # cache data set to filesystem (numpy file format)
+        np.savez_compressed(f'./assets/cache_npz/X_{sliceAmount}.npz', X)
+        np.savez_compressed(f'./assets/cache_npz/Y_{sliceAmount}.npz', Y)
+        print('Data set successfully cached for further reuse.')
 
+    # logging the data read from the filesystem
+    print(f'len(X) = {len(X)}, len(X[0]) = {len(X[0])}')
+    print(f'len(Y) = {len(Y)}, len(Y[0]) = {len(Y[0])}')
+    
     return X, Y

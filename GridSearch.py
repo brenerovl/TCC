@@ -17,7 +17,7 @@ def runGridSearch(estimator, parameters, X, Y):
     nested_scores = []
     trial_parameters = []
 
-    microF1 = make_scorer(f1_score , average='micro')
+    microF1 = make_scorer(f1_score, average='micro')
 
     print(f'Performing nested cross-validation with {N_TRIALS} trials and {N_SPLITS} splits...')
     for i in range(N_TRIALS):
