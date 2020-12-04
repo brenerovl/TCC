@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn import decomposition
 
 def exponentialList(len):
-    upper_exp = np.ceil(np.log2(len))-1
+    upper_exp = int(np.ceil(np.log2(len))-1)
     numbers = np.logspace(start=0,stop=upper_exp,num=upper_exp+1,base=2,dtype='int')+1
     numbers[0] = numbers[0]-1
     return numbers

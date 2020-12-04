@@ -13,7 +13,7 @@ def runLocalOutlierFactor(X, Y):
 
     parameters = { \
         'contamination' : np.linspace(0.01, 0.5, 10), \
-        'n_neighbors'   : exponentialList(X.shape[0]), \
+        'n_neighbors'   : exponentialList(len(X)), \
         'novelty'       : [True] }
 
     bestScores, bestParams = runGridSearch(lof, parameters, X, Y)
