@@ -16,8 +16,8 @@ def sliceDataFrame(sliceAmount):
     fake_csv = pd.read_csv('./assets/Fake.csv')
     true_csv = pd.read_csv('./assets/True.csv')
 
-    fake_csv.loc[n_news].to_csv(f'./assets/Fake_{sliceAmount}.csv')
-    true_csv.loc[n_news].to_csv(f'./assets/True_{sliceAmount}.csv')
+    fake_csv.loc[n_news].to_csv(f'./assets/cache_csv/Fake_{sliceAmount}.csv')
+    true_csv.loc[n_news].to_csv(f'./assets/cache_csv/True_{sliceAmount}.csv')
 
 def plots(df):
     # Grafico de quantidade de noticias divididas entre True e Fake

@@ -101,8 +101,8 @@ def load_and_preprocess(sliceAmount=-1):
     try:
         # Tenta carregar os data sets ja processado do disco
         print('Attempting to load data from cached data set...')
-        X = np.load(f'./assets/X_{sliceAmount}.npy',allow_pickle=True)
-        Y = np.load(f'./assets/Y_{sliceAmount}.npy',allow_pickle=True)
+        X = np.load(f'./assets/cache_npz/X_{sliceAmount}.npz')
+        Y = np.load(f'./assets/cache_npz/Y_{sliceAmount}.npz')
         print('Data successfully loaded from cached files.')
     except OSError:
         print('Unable to load cached data set. Loading from original files...')
@@ -113,8 +113,8 @@ def load_and_preprocess(sliceAmount=-1):
         # Carrega o data set inteiro e seleciona 'sliceAmount' noticias
         else:
             sliceDataFrame(sliceAmount)
-            true = pd.read_csv(f'./assets/True_{sliceAmount}.csv')
-            false = pd.read_csv(f'./assets/Fake_{sliceAmount}.csv')
+            true = pd.read_csv(f'./assets/cache_csv/True_{sliceAmount}.csv')
+            false = pd.read_csv(f'./assets/cache_csv/Fake_{sliceAmount}.csv')
         print('Data successfully loaded from original files.')
 
         global lemmatizer
@@ -160,8 +160,8 @@ def load_and_preprocess(sliceAmount=-1):
         X = principal_component_analysis(X)
 
     # cache data set to filesystem (numpy file format)
-    np.save(f'./assets/X_{sliceAmount}.npy', X)
-    np.save(f'./assets/Y_{sliceAmount}.npy', Y)
+    np.savez_compressed(f'./assets/cache_npz/X_{sliceAmount}.npz', X)
+    np.savez_compressed(f'./assets/cache_npz/Y_{sliceAmount}.npz', Y)
     print('Data set successfully cached for further reuse.')
 
     return X, Y
