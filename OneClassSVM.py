@@ -16,8 +16,8 @@ def runOneClassSVM(X, Y):
     ocsvm = OneClassSVM()
 
     parameters = { \
-        'nu'     : [0.125, 0.250, 0.5], \
-        'gamma'  : [0.1, 0.001, 0.00001, 'auto', 'scale'], \
+        'nu'     : [0.0625, 0.125, 0.250, 0.5], \
+        'gamma'  : [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 'auto', 'scale'], \
         'kernel' : ['linear', 'poly', 'rbf', 'sigmoid'] }
     
     bestScores, bestParams = runGridSearch(ocsvm, parameters, X, Y)

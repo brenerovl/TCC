@@ -19,13 +19,13 @@ def runGridSearch(estimator, parameters, X, Y):
 
     microF1 = make_scorer(f1_score , average='micro')
 
-    print(f'Performing nestes cross-validation with {N_TRIALS} trials and {N_SPLITS} splits...')
+    print(f'Performing nested cross-validation with {N_TRIALS} trials and {N_SPLITS} splits...')
     for i in range(N_TRIALS):
         inner_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
 
         # Non_nested parameter search and scoring
-        clf = GridSearchCV(estimator, parameters, scoring=microF1, verbose=1, n_jobs=-1, cv=inner_cv)
+        clf = GridSearchCV(estimator, parameters, scoring=microF1, verbose=3, n_jobs=-1, cv=inner_cv)
         clf.fit(X, Y)
         non_nested_scores.append(clf.best_score_)
         trial_parameters.append(clf.best_params_)

@@ -1,4 +1,5 @@
 import csv
+import math
 import re
 import string
 import time
@@ -48,7 +49,7 @@ def remove_stopwords(text):
     return " ".join(final_text)
 
 # Doing stemming
-def lemma(text):
+def lemmatize(text):
     word_filtered = []
     for i in text.split():
         word_tokens = word_tokenize(i)
@@ -64,21 +65,30 @@ def denoise_text(text):
     text = to_lower_case(text)
     text = remove_between_square_brackets(text)
     text = remove_stopwords(text)
-    text = lemma(text)
+    text = lemmatize(text)
     return text
 
 # perform principal component analysis
-def principal_component_analysis(X):
-    n_pca_components = int(np.floor(np.sqrt(min(len(X),len(X[0])))))
-    print(f'n_components = {n_pca_components}')
-    pca = decomposition.PCA(n_components=n_pca_components,svd_solver='full')
-    pca.fit(X)
-    plt.plot(np.cumsum(pca.explained_variance_ratio_))
-    plt.xlabel('number of components')
-    plt.ylabel('cumulative explained variance')
-    plt.show()
-    X = pca.transform(X)
-    return X
+def principal_component_analysis(X,search=False):
+    if search == False:
+        pca = decomposition.PCA(n_components=len(X),svd_solver='full')
+        pca.fit(X)
+    else:
+        print(f'n_samples = {len(X)}, n_features = {len(X[0])}')
+        n_min,n_max = 1,int(min(len(X),len(X[0])))
+        n = int((n_min + n_max) / 2)
+        score = -math.inf
+        while True:
+            pca = decomposition.PCA(n_components=n,svd_solver='full')
+            pca.fit(X)
+            score = np.cumsum(pca.explained_variance_ratio_)[-1]
+            print(f'n_components = {n} => score = {score}')
+            if score < 0.95:
+                n = int((n + n_max) / 2)
+                n_min = n
+            else:
+                break
+    return pca.transform(X)
 
 def load_and_preprocess(sliceAmount=-1):
     nltk.download('stopwords')
@@ -110,13 +120,10 @@ def load_and_preprocess(sliceAmount=-1):
     Y = [Y.to_numpy()]
     Y = np.transpose(Y)
 
-    # print(df.isna().sum())
     print('Title')
     print(df.title.count())
     print('Subject')
     print(df.subject.value_counts())
-
-    # plots(df)
 
     df['text'] = df['text'] + " " + df['title']
 
@@ -128,15 +135,15 @@ def load_and_preprocess(sliceAmount=-1):
     punctuation = list(string.punctuation)
     stop.update(punctuation)
 
-    # Apply function on review column
+    print(f'Performing denoise_text...')
     df['text'] = df['text'].apply(denoise_text)
 
-    # wordcloud()
-
+    print(f'Performing TF-IDF vectorization...')
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['text']).toarray()
     X = StandardScaler().fit_transform(X)
-    print(f'n_samples = {len(X)}, n_features = {len(X[0])}')
+
+    print(f'Performing principal component analysis...')
     X = principal_component_analysis(X)
 
     return X, Y

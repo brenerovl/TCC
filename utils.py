@@ -1,5 +1,7 @@
+import math
 import numpy as np
 import pandas as pd
+from sklearn import decomposition
 
 def exponentialList(len):
     upper_exp = np.ceil(np.log2(len))-1
