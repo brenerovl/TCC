@@ -70,27 +70,25 @@ def denoise_text(text):
     return text
 
 # perform principal component analysis
-def principal_component_analysis(X,search=False):
-    print(f'B: n_samples = {len(X)}, n_features = {len(X[0])}')
-    if search == False:
-        pca = decomposition.PCA(n_components=len(X),svd_solver='auto')
-        pca.fit(X)
-    else:
-        n_min,n_max = 1,int(min(len(X),len(X[0])))
-        n = int((n_min + n_max) / 2)
-        score = -math.inf
-        while True:
-            pca = decomposition.PCA(n_components=n,svd_solver='auto')
-            pca.fit(X)
-            score = np.cumsum(pca.explained_variance_ratio_)[-1]
-            print(f'n_components = {n} => score = {score}')
-            if score < 0.95:
-                n = int((n + n_max) / 2)
-                n_min = n
-            else:
-                break
+def principal_component_analysis(X,n=None):
+    print(f'Before:\tn_samples = {len(X)}, n_features = {len(X[0])}')
+    if n == 'n_samples_n_features_avg':
+        n = int((len(X) + len(X[0]))/2)
+    if n == 'n_samples_n_features_avg_sqrt':
+        n = int((np.sqrt(len(X)) + np.sqrt(len(X[0])))/2)
+    elif n == 'n_samples':
+        n = len(X)
+    elif n == 'n_features':
+        n = len(X[0])
+    if n == 'n_samples_sqrt':
+        n = int(np.sqrt(len(X)))
+    elif n == 'n_features_sqrt':
+        n = int(np.sqrt(len(X[0])))
+    pca = decomposition.PCA(n_components=n,svd_solver='auto')
+    pca.fit(X)
     X = pca.transform(X)
-    print(f'A: n_samples = {len(X)}, n_features = {len(X[0])}')
+    print(f'After:\tn_samples = {len(X)}, n_features = {len(X[0])}')
+    print(f'Score (cumulative variance) = {np.cumsum(pca.explained_variance_ratio_)[-1]}')
     return X
 
 def load_and_preprocess(sliceAmount=-1):
@@ -157,7 +155,7 @@ def load_and_preprocess(sliceAmount=-1):
         X = StandardScaler().fit_transform(X)
 
         print(f'Performing principal component analysis...')
-        X = principal_component_analysis(X)
+        X = principal_component_analysis(X,'n_samples')
 
     # cache data set to filesystem (numpy file format)
     np.savez_compressed(f'./assets/cache_npz/X_{sliceAmount}.npz', X)
