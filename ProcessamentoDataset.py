@@ -18,7 +18,7 @@ from sklearn import svm
 from sklearn.ensemble import IsolationForest
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from pprint import pprint
+from sklearn import decomposition
 
 def strip_html(text):
     soup = BeautifulSoup(text, "html.parser")
@@ -30,7 +30,7 @@ def strip_strange_symbols(text):
 def to_lower_case(text):
     return text.lower()
 
-#Removing the square brackets
+# Removing the square brackets
 def remove_between_square_brackets(text):
     return re.sub('\[[^]]*\]', '', text)
 
@@ -38,7 +38,7 @@ def remove_between_square_brackets(text):
 def remove_between_square_brackets(text):
     return re.sub(r'http\S+', '', text)
 
-#Removing the stopwords from text
+# Removing the stopwords from text
 def remove_stopwords(text):
     final_text = []
     for i in text.split():
@@ -46,7 +46,7 @@ def remove_stopwords(text):
             final_text.append(i.strip())
     return " ".join(final_text)
 
-#Doing stemming
+# Doing stemming
 def lemma(text):
     word_filtered = []
     for i in text.split():
@@ -56,7 +56,7 @@ def lemma(text):
             word_filtered.append(w)
     return " ".join(w for w in word_filtered)
 
-#Removing the noisy text
+#R emoving the noisy text
 def denoise_text(text):
     text = strip_html(text)
     text = strip_strange_symbols(text)
@@ -65,6 +65,13 @@ def denoise_text(text):
     text = remove_stopwords(text)
     text = lemma(text)
     return text
+
+# perform principal component analysis
+def principal_component_analysis(X,n):
+    pca = decomposition.PCA(n_components=n)
+    pca.fit(X)
+    X = pca.transform(X)
+    return X
 
 def plots(df):
     # Grafico de quantidade de noticias divididas entre True e Fake
@@ -155,5 +162,6 @@ def pre_processamento():
 
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['text']).toarray()
+    X = principal_component_analysis(X,10)
 
     return X, Y
