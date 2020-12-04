@@ -26,7 +26,7 @@ def runGridSearch(estimator, parameters, X, Y):
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
 
         # Non_nested parameter search and scoring
-        clf = GridSearchCV(estimator, parameters, scoring=microF1, verbose=3, n_jobs=-1, cv=inner_cv)
+        clf = GridSearchCV(estimator, parameters, scoring=microF1, verbose=1, n_jobs=-1, cv=inner_cv)
         clf.fit(X, Y)
         non_nested_scores.append(clf.best_score_)
         trial_parameters.append(clf.best_params_)

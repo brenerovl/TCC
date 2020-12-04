@@ -162,6 +162,11 @@ def pre_processamento():
 
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['text']).toarray()
-    X = principal_component_analysis(X,10)
+
+    sum = 0
+    for i in range(len(X)):
+        sum = sum + len(X[i])
+    n = int(np.ceil(np.sqrt(sum/len(0.7*X))))
+    X = principal_component_analysis(X,n)
 
     return X, Y
