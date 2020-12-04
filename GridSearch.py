@@ -21,6 +21,12 @@ def runGridSearch(estimator, parameters, X, Y):
 
     print(f'Performing nested cross-validation with {N_TRIALS} trials and {N_SPLITS} splits...')
     for i in range(N_TRIALS):
+
+        print(f'\n########################################')
+        print(f'############# TRIAL {i+1} / {N_TRIALS} #############')
+        print(f'########################################\n')
+        time.sleep(3)
+
         inner_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
 
@@ -40,7 +46,7 @@ def runGridSearch(estimator, parameters, X, Y):
     for i in range(N_TRIALS):
         f1_micro_avg = np.mean(nested_scores[i]['test_f1_micro'])
         if (f1_micro_avg > f1_micro_best):
-            print(f'\tBest average f1_micro = {f1_micro_avg} so far found at trial # {i}')
+            print(f'\tBest average f1_micro = {f1_micro_avg} so far found at trial # {i+1}')
             f1_micro_best = f1_micro_avg
             bestIndex = i
 
