@@ -16,7 +16,7 @@ def runOneClassSVM(X, Y):
     ocsvm = OneClassSVM()
 
     parameters = { \
-        'nu'     : [2e-1, 2e-2, 2e-3, 2e-4], \
+        'nu'     : [1/2, 1/4, 1/8, 1/16], \
         'gamma'  : [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 'auto', 'scale'], \
         'kernel' : ['linear', 'poly', 'rbf', 'sigmoid'] }
     
