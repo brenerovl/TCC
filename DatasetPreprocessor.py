@@ -73,7 +73,7 @@ def principal_component_analysis(X):
     print(f'Score (cumulative variance) = {np.cumsum(pca.explained_variance_ratio_)[-1]}')
     return X
 
-def load_and_preprocess(n_news='all',shuffle=False):
+def load_and_preprocess(n_news,shuffle):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
