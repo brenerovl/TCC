@@ -73,7 +73,7 @@ def principal_component_analysis(X):
     print(f'Score (cumulative variance) = {np.cumsum(pca.explained_variance_ratio_)[-1]}')
     return X
 
-def load_and_preprocess(n_news='all_unbalanced',shuffle=False):
+def load_and_preprocess(n_news='all',shuffle=False):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
@@ -95,8 +95,8 @@ def load_and_preprocess(n_news='all_unbalanced',shuffle=False):
         # Carrega a maior quantidade de noticias possivel mantendo o dataset balanceado
         elif n_news == 'max_balanced':
             slice_data_frame(21417,shuffle)
-            true = pd.read_csv(f'./assets/cache_csv/True_21417.csv')
-            false = pd.read_csv(f'./assets/cache_csv/Fake_21417.csv')
+            true = pd.read_csv(f'./assets/cache_csv/True_{n_news}.csv')
+            false = pd.read_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
         # Carrega n_news noticias de cada tipo, totalizando 2*n_news noticias
         else:
             slice_data_frame(n_news,shuffle)
