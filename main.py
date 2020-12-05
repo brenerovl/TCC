@@ -6,9 +6,9 @@ from Models import run_OneClassSVM
 
 if __name__ == "__main__":
 
-    X, Y = load_and_preprocess(n_news=10,shuffle=True)
+    X, Y = load_and_preprocess(n_news=1000,shuffle=True)
 
     run_OneClassSVM(X, Y)
-    #run_EllipticEnvelope(X, Y)
-    #run_LocalOutlierFactor(X, Y)
-    #run_IsolationForest(X, Y)
+    # run_EllipticEnvelope(X, Y)
+    # run_LocalOutlierFactor(X, Y)
+    # run_IsolationForest(X, Y)

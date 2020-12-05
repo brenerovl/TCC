@@ -29,13 +29,6 @@ def strip_html(text):
 def strip_strange_symbols(text):
     return re.sub(r'[\W_]+', ' ', text)
 
-def to_lower_case(text):
-    return text.lower()
-
-# Removing the square brackets
-def remove_between_square_brackets(text):
-    return re.sub('\[[^]]*\]', '', text)
-
 # Removing URL's
 def remove_urls(text):
     return re.sub(r'http\S+', '', text)
@@ -62,29 +55,18 @@ def lemmatize(text):
 def denoise_text(text):
     text = strip_html(text)
     text = strip_strange_symbols(text)
-    text = to_lower_case(text)
-    text = remove_between_square_brackets(text)
     text = remove_urls(text)
     text = remove_stopwords(text)
     text = lemmatize(text)
     return text
 
 # perform principal component analysis
-def principal_component_analysis(X,n=None):
+def principal_component_analysis(X):
     print(f'Before:\tn_samples = {len(X)}, n_features = {len(X[0])}')
-    if n == 'n_samples_n_features_avg':
-        n = int((len(X) + len(X[0]))/2)
-    if n == 'n_samples_n_features_avg_sqrt':
-        n = int((np.sqrt(len(X)) + np.sqrt(len(X[0])))/2)
-    elif n == 'n_samples':
-        n = len(X)
-    elif n == 'n_features':
-        n = len(X[0])
-    if n == 'n_samples_sqrt':
-        n = int(np.sqrt(len(X)))
-    elif n == 'n_features_sqrt':
-        n = int(np.sqrt(len(X[0])))
-    pca = decomposition.PCA(n_components=n,svd_solver='auto')
+    if (len(X) < len(X[0])):
+        pca = decomposition.PCA(n_components=len(X),svd_solver='full')
+    else:
+        pca = decomposition.PCA(n_components='mle',svd_solver='full')
     pca.fit(X)
     X = pca.transform(X)
     print(f'After:\tn_samples = {len(X)}, n_features = {len(X[0])}')
@@ -152,12 +134,18 @@ def load_and_preprocess(n_news='all',shuffle=False):
         df['text'] = df['text'].apply(denoise_text)
 
         print(f'Performing TF-IDF vectorization...')
-        vectorizer = TfidfVectorizer()
+        vectorizer = TfidfVectorizer(
+            strip_accents = 'unicode',
+            lowercase = True,
+            min_df = 0.01,
+            smooth_idf = True
+        )
         X = vectorizer.fit_transform(df['text']).toarray()
         X = StandardScaler().fit_transform(X)
+        print(f"Transformed dataframe shape = {X.shape}")
 
         print(f'Performing principal component analysis...')
-        X = principal_component_analysis(X,'n_samples')
+        X = principal_component_analysis(X)
 
         # cache data set to filesystem (numpy file format)
         np.savez_compressed(f'./assets/cache_npz/X_{n_news}.npz', X)

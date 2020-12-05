@@ -70,7 +70,7 @@ def run_OneClassSVM(X, Y):
 
 def run(model_obj, model_name, model_params, X, Y):
 
-    # perform grid search and nestes cross-validation
+    # perform grid search and nested cross-validation
     best_scores, best_params = grid_search_cv(model_obj, model_params, X, Y)
     results = merge_dicts(best_scores, best_params)
 	
