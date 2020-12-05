@@ -73,7 +73,7 @@ def principal_component_analysis(X):
     print(f'Score (cumulative variance) = {np.cumsum(pca.explained_variance_ratio_)[-1]}')
     return X
 
-def load_and_preprocess(n_news='all',shuffle=False):
+def load_and_preprocess(n_news='all_unbalanced',shuffle=False):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
@@ -88,11 +88,16 @@ def load_and_preprocess(n_news='all',shuffle=False):
         print('Data successfully loaded from cached files.')
     except OSError:
         print('Unable to load cached data set. Loading from original files...')
-        # Carrega o data set inteiro (21417+23537=44954 noticias)
-        if n_news == 'all':
+        # Carrega todas as noticias do data set (21417 true + 23537 fake = 44954 total)
+        if n_news == 'all_unbalanced':
             true = pd.read_csv('./assets/True.csv')
             false = pd.read_csv('./assets/Fake.csv')
-        # Carrega o data set inteiro e seleciona 'sliceAmount' noticias
+        # Carrega a maior quantidade de noticias possivel mantendo o dataset balanceado
+        elif n_news == 'max_balanced':
+            slice_data_frame(21417,shuffle)
+            true = pd.read_csv(f'./assets/cache_csv/True_21417.csv')
+            false = pd.read_csv(f'./assets/cache_csv/Fake_21417.csv')
+        # Carrega n_news noticias de cada tipo, totalizando 2*n_news noticias
         else:
             slice_data_frame(n_news,shuffle)
             true = pd.read_csv(f'./assets/cache_csv/True_{n_news}.csv')
@@ -137,7 +142,7 @@ def load_and_preprocess(n_news='all',shuffle=False):
         vectorizer = TfidfVectorizer(
             strip_accents = 'unicode',
             lowercase = True,
-            min_df = 0.01,
+            min_df = 0.10,
             smooth_idf = True
         )
         X = vectorizer.fit_transform(df['text']).toarray()
@@ -145,7 +150,7 @@ def load_and_preprocess(n_news='all',shuffle=False):
         print(f"Transformed dataframe shape = {X.shape}")
 
         print(f'Performing principal component analysis...')
-        X = principal_component_analysis(X)
+        # X = principal_component_analysis(X)
 
         # cache data set to filesystem (numpy file format)
         np.savez_compressed(f'./assets/cache_npz/X_{n_news}.npz', X)
