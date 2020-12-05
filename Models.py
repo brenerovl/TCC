@@ -23,7 +23,8 @@ def run_EllipticEnvelope(X, Y):
 
     parameters = {
         'contamination'   : np.linspace(0.05, 0.5, 10),
-        'assume_centered' : [True, False]
+        'assume_centered' : [True, False],
+        'support_fraction': [0.85]
 	}
 
     run(ee, 'IsolationForest', parameters, X, Y)
@@ -78,5 +79,5 @@ def run(model_obj, model_name, model_params, X, Y):
     pprint.pprint(results)
 	
     # persist results to filesystem
-    metrics_df = pd.DataFrame(results, columns= ['value'], index = results.keys())
+    metrics_df = pd.DataFrame(results.values(), columns= ['value'], index = results.keys())
     metrics_df.to_excel(f'./results/{model_name}.xlsx')
