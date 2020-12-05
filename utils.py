@@ -3,13 +3,13 @@ import numpy as np
 import pandas as pd
 from sklearn import decomposition
 
-def exponentialList(len):
+def exponential_list(len):
     upper_exp = int(np.ceil(np.log2(len))-1)
     numbers = np.logspace(start=0,stop=upper_exp,num=upper_exp+1,base=2,dtype='int')+1
     numbers[0] = numbers[0]-1
     return numbers
 
-def sliceDataFrame(n_news,shuffle=False):
+def slice_data_frame(n_news,shuffle=False):
     # n_news - Quantidade de cada tipo de notícias que estará no dataframe reduzido
     news_range = list(range(n_news))
 
@@ -22,6 +22,11 @@ def sliceDataFrame(n_news,shuffle=False):
     else:
         fake_csv.loc[news_range].to_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
         true_csv.loc[news_range].to_csv(f'./assets/cache_csv/True_{n_news}.csv')
+
+def merge_dicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
 
 def plots(df):
     # Grafico de quantidade de noticias divididas entre True e Fake

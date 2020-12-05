@@ -20,7 +20,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from wordcloud import STOPWORDS, WordCloud
-from utils import sliceDataFrame
+from utils import slice_data_frame
 
 def strip_html(text):
     soup = BeautifulSoup(text, "html.parser")
@@ -112,7 +112,7 @@ def load_and_preprocess(n_news='all',shuffle=False):
             false = pd.read_csv('./assets/Fake.csv')
         # Carrega o data set inteiro e seleciona 'sliceAmount' noticias
         else:
-            sliceDataFrame(n_news,shuffle)
+            slice_data_frame(n_news,shuffle)
             true = pd.read_csv(f'./assets/cache_csv/True_{n_news}.csv')
             false = pd.read_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
         print('Data successfully loaded from original files.')

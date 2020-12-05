@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score, make_scorer
 from sklearn.model_selection import (GridSearchCV, KFold, cross_val_score, cross_validate)
 from sklearn.neighbors import LocalOutlierFactor
 
-def runGridSearch(estimator, parameters, X, Y):
+def grid_search_cv(model_obj, model_params, X, Y):
     N_TRIALS = 10
     N_SPLITS = 5
 
@@ -25,13 +25,13 @@ def runGridSearch(estimator, parameters, X, Y):
         print(f'\n########################################')
         print(f'############# TRIAL {i+1} / {N_TRIALS} #############')
         print(f'########################################\n')
-        time.sleep(3)
+        # time.sleep(3)
 
         inner_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
 
         # Non_nested parameter search and scoring
-        clf = GridSearchCV(estimator, parameters, scoring=microF1, verbose=3, n_jobs=-1, cv=inner_cv)
+        clf = GridSearchCV(model_obj, model_params, scoring=microF1, verbose=1, n_jobs=-1, cv=inner_cv)
         clf.fit(X, Y)
         non_nested_scores.append(clf.best_score_)
         trial_parameters.append(clf.best_params_)
@@ -54,14 +54,14 @@ def runGridSearch(estimator, parameters, X, Y):
     bestParams = trial_parameters[bestIndex]
     bestScores = \
     { 
-        'fit_time' : np.mean(nested_scores[bestIndex]['fit_time']),
-        'score_time' : np.mean(nested_scores[bestIndex]['score_time']),
-        'accuracy' : np.mean(nested_scores[bestIndex]['test_accuracy']),
-        'precision' : np.mean(nested_scores[bestIndex]['test_precision']),
-        'recall' : np.mean(nested_scores[bestIndex]['test_recall']),
-        'f1_micro' : np.mean(nested_scores[bestIndex]['test_f1_micro']),
-        'f1_macro' : np.mean(nested_scores[bestIndex]['test_f1_macro']),
-        'f1_weighted' : np.mean(nested_scores[bestIndex]['test_f1_weighted']),
+        '_fit_time' : np.mean(nested_scores[bestIndex]['fit_time']),
+        '_score_time' : np.mean(nested_scores[bestIndex]['score_time']),
+        '_accuracy' : np.mean(nested_scores[bestIndex]['test_accuracy']),
+        '_precision' : np.mean(nested_scores[bestIndex]['test_precision']),
+        '_recall' : np.mean(nested_scores[bestIndex]['test_recall']),
+        '_f1_micro' : np.mean(nested_scores[bestIndex]['test_f1_micro']),
+        '_f1_macro' : np.mean(nested_scores[bestIndex]['test_f1_macro']),
+        '_f1_weighted' : np.mean(nested_scores[bestIndex]['test_f1_weighted']),
     }  
 
     return (bestScores, bestParams)
