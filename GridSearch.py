@@ -31,13 +31,13 @@ def grid_search_cv(model_obj, model_params, X, Y):
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
 
         # Non_nested parameter search and scoring
-        clf = GridSearchCV(model_obj, model_params, scoring=microF1, verbose=1, n_jobs=-1, cv=inner_cv)
+        clf = GridSearchCV(model_obj, model_params, cv=inner_cv, n_jobs=-1, scoring=microF1, verbose=1)
         clf.fit(X, Y)
         non_nested_scores.append(clf.best_score_)
         trial_parameters.append(clf.best_params_)
 
         # Nested CV with parameter optimization
-        nested_score = cross_validate(clf, X, Y, cv=outer_cv, scoring=('accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted'))
+        nested_score = cross_validate(clf, X, Y, cv=outer_cv, n_jobs=-1, scoring=('accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted'), verbose=1)
         nested_scores.append(nested_score)
 
     print(f'Finding which nested CV produced the best result...')
