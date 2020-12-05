@@ -89,14 +89,9 @@ def load_and_preprocess(n_news,shuffle):
     except OSError:
         print('Unable to load cached data set. Loading from original files...')
         # Carrega todas as noticias do data set (21417 true + 23537 fake = 44954 total)
-        if n_news == 'all_unbalanced':
+        if n_news == 'all':
             true = pd.read_csv('./assets/True.csv')
             false = pd.read_csv('./assets/Fake.csv')
-        # Carrega a maior quantidade de noticias possivel mantendo o dataset balanceado
-        elif n_news == 'max_balanced':
-            slice_data_frame(21417,shuffle)
-            true = pd.read_csv(f'./assets/cache_csv/True_{n_news}.csv')
-            false = pd.read_csv(f'./assets/cache_csv/Fake_{n_news}.csv')
         # Carrega n_news noticias de cada tipo, totalizando 2*n_news noticias
         else:
             slice_data_frame(n_news,shuffle)
