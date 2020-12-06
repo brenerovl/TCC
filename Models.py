@@ -27,7 +27,7 @@ def run_EllipticEnvelope(X, Y):
         'support_fraction': [0.85]
 	}
 
-    run(ee, 'IsolationForest', parameters, X, Y)
+    run(ee, 'EllipticEnvelope', parameters, X, Y)
 
 def run_IsolationForest(X, Y):
 
