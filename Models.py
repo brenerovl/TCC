@@ -14,7 +14,7 @@ from sklearn.model_selection import cross_validate
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.svm import OneClassSVM
 from GridSearch import grid_search_cv
-from utils import exponential_list
+from utils import exponential_list, isolation_exponential_list
 from utils import merge_dicts
 
 def run_EllipticEnvelope(X, Y):
@@ -24,7 +24,7 @@ def run_EllipticEnvelope(X, Y):
     parameters = {
         'contamination'   : np.linspace(0.05, 0.5, 10),
         'assume_centered' : [True, False],
-        'support_fraction': [0.85]
+        'support_fraction': [0.95]
 	}
 
     run(ee, 'EllipticEnvelope', parameters, X, Y)
@@ -39,7 +39,7 @@ def run_IsolationForest(X, Y):
     parameters = {
         'contamination' : np.linspace(0.05, 0.5, 10),
         'n_estimators'  : (50, 100, 150),
-        'max_samples'   : exponential_list(max_sample_limit),
+        'max_samples'   : isolation_exponential_list(max_sample_limit),
         'max_features'  : exponential_list(max_features_limit)
 	}
 

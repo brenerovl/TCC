@@ -9,6 +9,13 @@ def exponential_list(len):
     numbers[0] = numbers[0]-1
     return numbers
 
+def isolation_exponential_list(len):
+    upper_exp = int(np.ceil(np.log2(len))-1)
+    numbers = np.logspace(start=1,stop=upper_exp,num=upper_exp,base=2,dtype='int')+1
+    numbers[0] = numbers[0]-1
+    print (numbers)
+    return numbers
+
 def slice_data_frame(n_news,shuffle=False):
     # n_news - Quantidade de cada tipo de notícias que estará no dataframe reduzido
     news_range = list(range(n_news))
