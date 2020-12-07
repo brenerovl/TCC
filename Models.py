@@ -23,9 +23,9 @@ def run_EllipticEnvelope(min_df, X, Y):
     p_contamination = np.count_nonzero(Y == -1) / len(Y)
 
     parameters = {
-        'contamination'   : ['auto', p_contamination],
+        'contamination'   : [p_contamination],
         'assume_centered' : [True, False],
-        'support_fraction': [0.95]
+        'support_fraction': [0.80, 0.85, 0.90, 0.95]
 	}
 
     run(ee, 'EllipticEnvelope', parameters, min_df, X, Y)
