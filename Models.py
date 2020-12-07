@@ -25,7 +25,7 @@ def run_EllipticEnvelope(min_df, X, Y):
     parameters = {
         'contamination'   : [p_contamination],
         'assume_centered' : [True, False],
-        'support_fraction': [0.80, 0.85, 0.90, 0.95]
+        'support_fraction': [0.80, 0.85, 0.90, 0.95, 1.00]
 	}
 
     run(ee, 'EllipticEnvelope', parameters, min_df, X, Y)
