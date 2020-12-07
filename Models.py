@@ -20,8 +20,10 @@ def run_EllipticEnvelope(min_df, X, Y):
 
     ee = EllipticEnvelope()
 
+    p_contamination = np.count_nonzero(Y == -1) / len(Y)
+
     parameters = {
-        'contamination'   : np.linspace(0.05, 0.5, 10),
+        'contamination'   : ['auto', p_contamination],
         'assume_centered' : [True, False],
         'support_fraction': [0.95]
 	}
@@ -48,9 +50,11 @@ def run_LocalOutlierFactor(min_df, X, Y):
 
     lof = LocalOutlierFactor()
 
+    p_contamination = np.count_nonzero(Y == -1) / len(Y)
+
     parameters = {
-        'contamination' : np.linspace(0.05, 0.5, 10),
-        'n_neighbors'   : exponential_list(len(X)),
+        'contamination' : ['auto', p_contamination],
+        'n_neighbors'   : [1, 3, 5, 9, 17, 33, 65, 129, 257, 513, 1025],
         'novelty'       : [True]
 	}
 
