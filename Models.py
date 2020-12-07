@@ -14,10 +14,9 @@ from sklearn.model_selection import cross_validate
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.svm import OneClassSVM
 from GridSearch import grid_search_cv
-from utils import exponential_list, isolation_exponential_list
 from utils import merge_dicts
 
-def run_EllipticEnvelope(X, Y):
+def run_EllipticEnvelope(min_df, X, Y):
 
     ee = EllipticEnvelope()
 
@@ -27,25 +26,25 @@ def run_EllipticEnvelope(X, Y):
         'support_fraction': [0.95]
 	}
 
-    run(ee, 'EllipticEnvelope', parameters, X, Y)
+    run(ee, 'EllipticEnvelope', parameters, min_df, X, Y)
 
-def run_IsolationForest(X, Y):
+def run_IsolationForest(min_df, X, Y):
 
     isf = IsolationForest()
 
-    max_sample_limit = len(X)
-    max_features_limit = len(X[0])
+    p_contamination = np.count_nonzero(Y == -1) / len(Y)
 
     parameters = {
-        'contamination' : np.linspace(0.05, 0.5, 10),
-        'n_estimators'  : (50, 100, 150),
-        'max_samples'   : isolation_exponential_list(max_sample_limit),
-        'max_features'  : exponential_list(max_features_limit)
+        'contamination' : ['auto', p_contamination],
+        'n_estimators'  : (50, 100, 200),
+        'max_samples'   : [64, 128, 256, 512, 1024],
+        'max_features'  : [0.25, 0.5, 1.0],
+        'behaviour'     : ['new']
 	}
 
-    run(isf, 'IsolationForest', parameters, X, Y)
+    run(isf, 'IsolationForest', parameters, min_df, X, Y)
 
-def run_LocalOutlierFactor(X, Y):
+def run_LocalOutlierFactor(min_df, X, Y):
 
     lof = LocalOutlierFactor()
 
@@ -55,9 +54,9 @@ def run_LocalOutlierFactor(X, Y):
         'novelty'       : [True]
 	}
 
-    run(lof, 'LocalOutlierFactor', parameters, X, Y)
+    run(lof, 'LocalOutlierFactor', parameters, min_df, X, Y)
 
-def run_OneClassSVM(X, Y):
+def run_OneClassSVM(min_df, X, Y):
 
     ocsvm = OneClassSVM()
 
@@ -67,9 +66,9 @@ def run_OneClassSVM(X, Y):
         'kernel' : ['linear', 'poly', 'rbf', 'sigmoid']
 	}
     
-    run(ocsvm, 'OneClassSVM', parameters, X, Y)
+    run(ocsvm, 'OneClassSVM', parameters, min_df, X, Y)
 
-def run(model_obj, model_name, model_params, X, Y):
+def run(model_obj, model_name, model_params, min_df, X, Y):
 
     # perform grid search and nested cross-validation
     best_scores, best_params = grid_search_cv(model_obj, model_params, X, Y)
@@ -80,4 +79,4 @@ def run(model_obj, model_name, model_params, X, Y):
 	
     # persist results to filesystem
     metrics_df = pd.DataFrame(results.values(), columns= ['value'], index = results.keys())
-    metrics_df.to_excel(f'./results/{model_name}.xlsx')
+    metrics_df.to_excel(f'./results/{model_name}_MINDF={min_df}_NNEWS={int(len(X)/2)}.xlsx')

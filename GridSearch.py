@@ -25,7 +25,6 @@ def grid_search_cv(model_obj, model_params, X, Y):
         print(f'\n########################################')
         print(f'############# TRIAL {i+1} / {N_TRIALS} #############')
         print(f'########################################\n')
-        # time.sleep(3)
 
         inner_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)

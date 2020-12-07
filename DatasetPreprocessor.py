@@ -73,7 +73,7 @@ def principal_component_analysis(X):
     print(f'Score (cumulative variance) = {np.cumsum(pca.explained_variance_ratio_)[-1]}')
     return X
 
-def load_and_preprocess(n_news,shuffle):
+def load_and_preprocess(min_df,n_news,shuffle):
     nltk.download('stopwords')
     nltk.download('punkt')
     nltk.download('wordnet')
@@ -137,7 +137,7 @@ def load_and_preprocess(n_news,shuffle):
         vectorizer = TfidfVectorizer(
             strip_accents = 'unicode',
             lowercase = True,
-            min_df = 0.10,
+            min_df = min_df,
             smooth_idf = True
         )
         X = vectorizer.fit_transform(df['text']).toarray()

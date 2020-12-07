@@ -6,9 +6,13 @@ from Models import run_OneClassSVM
 
 if __name__ == "__main__":
 
-    X, Y = load_and_preprocess(n_news=1000,shuffle=True)
+    min_df = 0.10
+    n_news = 100
+    shuffle = True
 
-    run_OneClassSVM(X, Y)
-    # run_EllipticEnvelope(X, Y)
-    # run_LocalOutlierFactor(X, Y)
-    # run_IsolationForest(X, Y)
+    X, Y = load_and_preprocess(min_df,n_news,shuffle)
+
+    run_EllipticEnvelope(min_df, X, Y)
+    run_IsolationForest(min_df, X, Y)
+    run_LocalOutlierFactor(min_df, X, Y)
+    run_OneClassSVM(min_df, X, Y)
