@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     min_df = 0.10
 
-    X, Y = load_and_preprocess(min_df=min_df,n_news=100,shuffle=True)
+    X, Y = load_and_preprocess(min_df=min_df,n_news=1000,shuffle=True)
 
     # run grid search to find the best parameters
     run_EllipticEnvelope(min_df, X, Y)
