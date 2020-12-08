@@ -1,0 +1,11 @@
+# Recomenda-se o uso do Python 3.8
+numpy==1.17.5
+scipy
+pandas
+seaborn
+matplotlib==3.3.3
+nltk
+wordcloud
+bs4
+sklearn
+openpyxl
