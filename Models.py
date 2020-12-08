@@ -83,4 +83,6 @@ def run(model_obj, model_name, model_params, min_df, X, Y):
 	
     # persist results to filesystem
     metrics_df = pd.DataFrame(results.values(), columns= ['value'], index = results.keys())
-    metrics_df.to_excel(f'./results/{model_name}_MINDF={min_df}_NNEWS={int(len(X)/2)}.xlsx')
+    # metrics_df.to_excel(f'./results/{model_name}_MINDF={min_df}_NNEWS={int(len(X)/2)}.xlsx')
+    metrics_df.to_csv(f'./results/{model_name}_MINDF={min_df}_NNEWS={int(len(X)/2)}.csv')
+

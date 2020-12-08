@@ -75,7 +75,8 @@ def evaluate(model_obj, model_name, X, Y, runs=10):
 	
     # persist results to filesystem
     results_df = pd.DataFrame(results.values(), columns= ['value'], index = results.keys())
-    results_df.to_excel(f'./stats/{model_name}.xlsx')
+    # results_df.to_excel(f'./stats/{model_name}.xlsx')
+    results_df.to_csv(f'./stats/{model_name}.csv')
 
     return results
 
