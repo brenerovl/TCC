@@ -1,0 +1,14 @@
+,value
+_fit_time,196.66098155975342
+_score_time,0.4761055946350098
+_accuracy,0.6165
+_precision,0.6205815022041261
+_recall,0.6058961689079383
+_f1_micro,0.6165
+_f1_macro,0.6158762461678899
+_f1_weighted,0.6161885672804684
+behaviour,new
+contamination,0.5
+max_features,1.0
+max_samples,1024
+n_estimators,50
