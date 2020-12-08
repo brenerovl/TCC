@@ -29,7 +29,7 @@ def strip_html(text):
 def strip_strange_symbols(text):
     return re.sub(r'[\W_]+', ' ', text)
 
-# Removing URL's
+# Removing URLs
 def remove_urls(text):
     return re.sub(r'http\S+', '', text)
 
@@ -51,7 +51,7 @@ def lemmatize(text):
             word_filtered.append(w)
     return " ".join(w for w in word_filtered)
 
-#R emoving the noisy text
+# Removing noisy text
 def denoise_text(text):
     text = strip_html(text)
     text = strip_strange_symbols(text)
@@ -144,7 +144,7 @@ def load_and_preprocess(min_df,n_news,shuffle):
         X = StandardScaler().fit_transform(X)
         print(f"Transformed dataframe shape = {X.shape}")
 
-        print(f'Performing principal component analysis...')
+        # print(f'Performing principal component analysis...')
         # X = principal_component_analysis(X)
 
         # cache data set to filesystem (numpy file format)
@@ -155,5 +155,5 @@ def load_and_preprocess(min_df,n_news,shuffle):
     # logging the data read from the filesystem
     print(f'len(X) = {len(X)}, len(X[0]) = {len(X[0])}')
     print(f'len(Y) = {len(Y)}, len(Y[0]) = {len(Y[0])}')
-    
+
     return X, Y

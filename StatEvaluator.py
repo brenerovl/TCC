@@ -20,14 +20,14 @@ def evaluate_EllipticEnvelope(X, Y, p_contamination, p_assume_centered, p_suppor
     )
     return evaluate(ee, 'EllipticEnvelope', X, Y)
 
-def evaluate_IsolationForest(X, Y, p_contamination, p_n_estimators, p_max_samples, p_max_features, p_behaviour):
+def evaluate_IsolationForest(X, Y, p_contamination, p_n_estimators, p_max_samples, p_max_features):
     isf = IsolationForest(
         contamination=p_contamination,
         n_estimators=p_n_estimators,
         max_samples=p_max_samples,
-        max_features=p_max_features,
-        behaviour=p_behaviour
+        max_features=p_max_features
     )
+
     return evaluate(isf, 'IsolationForest', X, Y)
 
 def evaluate_LocalOutlierFactor(X, Y, p_contamination, p_n_neighbors, p_novelty):
@@ -48,6 +48,10 @@ def evaluate_OneClassSVM(X, Y, p_nu, p_gamma, p_kernel):
 
 def evaluate(model_obj, model_name, X, Y, runs=10):
     
+    print(f'############################################')
+    print(f'###### Evaluating {model_name} ######'.ljust(44, '#'))
+    print(f'############################################')
+
     metrics = ['fit_time', 'score_time', 'accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted']
 
     scores = {}
