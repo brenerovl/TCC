@@ -48,9 +48,9 @@ def evaluate_OneClassSVM(X, Y, p_nu, p_gamma, p_kernel):
 
 def evaluate(model_obj, model_name, X, Y, runs=10):
     
-    print(f'############################################')
+    print(f'\n############################################')
     print(f'###### Evaluating {model_name} ######'.ljust(44, '#'))
-    print(f'############################################')
+    print(f'############################################\n')
 
     metrics = ['fit_time', 'score_time', 'accuracy', 'precision', 'recall', 'f1_micro', 'f1_macro', 'f1_weighted']
 

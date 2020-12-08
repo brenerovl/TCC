@@ -10,7 +10,7 @@ from sklearn.model_selection import (GridSearchCV, KFold, cross_val_score, cross
 from sklearn.neighbors import LocalOutlierFactor
 
 def grid_search_cv(model_obj, model_name, model_params, X, Y):
-    N_TRIALS = 1
+    N_TRIALS = 10
     N_SPLITS = 5
 
     non_nested_scores = []
@@ -22,9 +22,9 @@ def grid_search_cv(model_obj, model_name, model_params, X, Y):
     print(f'Performing nested cross-validation with {N_TRIALS} trials and {N_SPLITS} splits...')
     for i in range(N_TRIALS):
 
-        print(f'##################################################')
+        print(f'\n##################################################')
         print(f'####### {model_name} : TRIAL {i+1:02} / {N_TRIALS:02} #######'.ljust(50, '#'))
-        print(f'##################################################')
+        print(f'##################################################\n')
 
         inner_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
         outer_cv = KFold(n_splits=N_SPLITS, shuffle=True, random_state=i)
