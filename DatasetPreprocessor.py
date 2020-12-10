@@ -74,9 +74,9 @@ def principal_component_analysis(X):
     return X
 
 def load_and_preprocess(min_df,n_news,shuffle):
-    nltk.download('stopwords')
-    nltk.download('punkt')
-    nltk.download('wordnet')
+    nltk.download('stopwords',quiet=True)
+    nltk.download('punkt',quiet=True)
+    nltk.download('wordnet',quiet=True)
 
     try:
         # Tenta carregar os data sets ja processado do disco
